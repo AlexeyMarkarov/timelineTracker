@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>qtquickcontrols2.conf</file>
-        <file>qml/main.qml</file>
+        <file>qml/MainWindow.qml</file>
+        <file>qml/DateTimeWidget.qml</file>
     </qresource>
 </RCC>

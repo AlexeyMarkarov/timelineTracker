@@ -1,14 +1,15 @@
 #include <QGuiApplication>
-#include <QQmlApplicationEngine>
+#include "MainController.h"
 
 int main(int argc, char *argv[])
 {
+    qputenv("QML_DISABLE_DISK_CACHE", QByteArray::number(1));
+
     QGuiApplication app(argc, argv);
 
-    QQmlApplicationEngine engine;
-    engine.load(QUrl(QLatin1String("qrc:/qml/main.qml")));
-    if (engine.rootObjects().isEmpty())
-        return -1;
+    MainController ctrl;
+    const int appResult = ctrl.init() ? app.exec() : -1;
+    ctrl.release();
 
-    return app.exec();
+    return appResult;
 }

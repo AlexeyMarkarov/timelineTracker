@@ -2,9 +2,15 @@ QT += qml quick
 
 CONFIG += c++11 warn_on
 
-SOURCES += ./sources/main.cpp
+HEADERS += \
+    sources/MainController.h \
+    sources/MainWindow.h
 
-RESOURCES += ./resources/qml.qrc
+SOURCES += sources/main.cpp \
+    sources/MainController.cpp \
+    sources/MainWindow.cpp
+
+RESOURCES += resources/qml.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
