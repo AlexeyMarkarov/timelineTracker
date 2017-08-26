@@ -29,7 +29,10 @@ void MainWindow::createMembers()
 
 void MainWindow::connectSignals()
 {
-    connect(mWindow, SIGNAL(addTime(const QDateTime, const QDateTime)), this, SLOT(onAddTime(const QDateTime, const QDateTime)));
+    connect(mWindow, SIGNAL(addTimeClicked(const QDateTime, const QDateTime)),
+            this, SIGNAL(addTimeClicked(const QDateTime, const QDateTime)));
+    connect(mWindow, SIGNAL(removeTimeEntry(const int)),
+            this, SIGNAL(removeTimeEntry(const int)));
 }
 
 bool MainWindow::isCreated() const
@@ -45,8 +48,4 @@ void MainWindow::setTimeModel(QAbstractItemModel *model)
 void MainWindow::setTotalTimeText(const QString text)
 {
     QQmlProperty::write(mWindow, "totalTimeText", text);
-}
-
-void MainWindow::onAddTime(const QDateTime start, const QDateTime end)
-{
 }

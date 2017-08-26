@@ -4,11 +4,13 @@ CONFIG += c++11 warn_on
 
 HEADERS += \
     sources/MainController.h \
-    sources/MainWindow.h
+    sources/MainWindow.h \
+    sources/TimelineModel.h
 
 SOURCES += sources/main.cpp \
     sources/MainController.cpp \
-    sources/MainWindow.cpp
+    sources/MainWindow.cpp \
+    sources/TimelineModel.cpp
 
 RESOURCES += resources/qml.qrc
 
