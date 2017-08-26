@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import QtQuick.Controls 2.0
+import QtQuick.Controls 2.2
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.3
 
@@ -9,21 +9,8 @@ Rectangle {
     implicitHeight: mainLayout.implicitHeight
 
     property alias date: calendar.selectedDate
-    property alias hours: hoursTumbler.currentIndex
-    property alias minutes: minutesTumbler.currentIndex
-
-    Component {
-        id: tumblerComponent
-
-        Label {
-            id: label
-            text: modelData
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            opacity: 1.0 - Math.abs(Tumbler.displacement) / (Tumbler.tumbler.visibleItemCount / 2)
-            font.pointSize: 20
-        }
-    }
+    property alias hours: hoursControl.value
+    property alias minutes: minutesControl.value
 
     ColumnLayout {
         id: mainLayout
@@ -33,16 +20,14 @@ Rectangle {
             Layout.fillHeight: true
             Layout.fillWidth: true
 
-            Tumbler {
-                id: hoursTumbler
-                model: 24
-                delegate: tumblerComponent
+            SpinBox {
+                id: hoursControl
+                maximumValue: 23
                 Layout.fillWidth: true
             }
-            Tumbler {
-                id: minutesTumbler
-                model: 60
-                delegate: tumblerComponent
+            SpinBox {
+                id: minutesControl
+                maximumValue: 59
                 Layout.fillWidth: true
             }
         }
