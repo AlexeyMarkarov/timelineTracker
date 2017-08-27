@@ -26,6 +26,7 @@ public:
     virtual bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
 
     QVector<TimeSpan> getTimeline() const;
+    Q_INVOKABLE QString getStdText() const;
 
 public slots:
     void addTime(const TimeSpan time);

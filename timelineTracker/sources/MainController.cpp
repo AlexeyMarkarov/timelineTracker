@@ -109,6 +109,12 @@ void MainController::updateChart()
         maxMsec = std::max(maxMsec, span.getSpanMsec());
     }
 
+    if(maxMsec <= 0)
+    {
+        qDebug() << "unable to update chart: maximum time span is zero msec";
+        return;
+    }
+
     // set chart boundaries
     dateTimeAxis->setMin(roundHour(minDt).addSecs(-60 * 60));
     dateTimeAxis->setMax(roundHour(maxDt).addSecs(60 * 60));

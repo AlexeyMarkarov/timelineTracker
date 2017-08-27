@@ -20,11 +20,20 @@ Rectangle {
             Layout.fillHeight: true
             Layout.fillWidth: true
 
+            Label {
+                text: qsTr("H:")
+            }
+
             SpinBox {
                 id: hoursControl
                 maximumValue: 23
                 Layout.fillWidth: true
             }
+
+            Label {
+                text: qsTr("M:")
+            }
+
             SpinBox {
                 id: minutesControl
                 maximumValue: 59

@@ -6,10 +6,10 @@ import QtCharts 2.2
 ApplicationWindow {
     id: mainWindow
     visible: true
-    width: toolsLayout.implicitWidth * 2
-    height: 480
     minimumHeight: mainLayout.implicitHeight + mainLayout.anchors.margins * 2
     minimumWidth: mainLayout.implicitWidth + mainLayout.anchors.margins * 2
+    width: minimumWidth
+    height: minimumHeight
     title: qsTr("Timeline Tracker")
 
     property var timeModel
@@ -46,12 +46,23 @@ ApplicationWindow {
 
         RowLayout {
             Layout.fillWidth: true
-            Layout.maximumHeight: toolsLayout.implicitHeight
+            Layout.maximumHeight: dateTimeLayout.implicitHeight
+
+            Item { Layout.fillWidth: true }
 
             GroupBox {
                 title: qsTr("Intervals")
+                padding: 1
                 Layout.fillHeight: true
-                Layout.fillWidth: true
+                Layout.preferredWidth: (timeModel !== undefined ?
+                                            intervalsFontMetrics.boundingRect(timeModel.getStdText()).width :
+                                            100) +
+                                       padding * 2 +
+                                       intervalsFontMetrics.maximumCharacterWidth
+
+                FontMetrics {
+                    id: intervalsFontMetrics
+                }
 
                 ListView {
                     id: timelineListView
@@ -60,8 +71,8 @@ ApplicationWindow {
                     clip: true
 
                     delegate: Rectangle {
-                        implicitHeight: totalSpanLabel.paintedHeight + 10
-                        implicitWidth: totalSpanLabel.paintedWidth + 10
+                        implicitHeight: totalSpanLabel.paintedHeight + intervalsFontMetrics.height
+                        implicitWidth: totalSpanLabel.paintedWidth + intervalsFontMetrics.maximumCharacterWidth
                         color: ListView.isCurrentItem ?
                                    syspalActive.highlight :
                                    (index % 2 ?
@@ -73,6 +84,7 @@ ApplicationWindow {
                             text: totalSpan
                             anchors.centerIn: parent
                             color: ListView.isCurrentItem ? syspalActive.highlightedText : syspalActive.text
+                            font: intervalsFontMetrics.font
                         }
 
                         MouseArea {
@@ -83,14 +95,7 @@ ApplicationWindow {
                         }
                     }
 
-                    ScrollBar.vertical: ScrollBar {
-                        parent: timelineListView.parent
-                        anchors {
-                            top: timelineListView.top
-                            left: timelineListView.right
-                            bottom: timelineListView.bottom
-                        }
-                    }
+                    ScrollBar.vertical: ScrollBar {}
 
                     DelayButton {
                         id: removeRowButton
@@ -121,65 +126,57 @@ ApplicationWindow {
                 }
             }
 
-            ColumnLayout {
-                id: toolsLayout
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-                Layout.maximumWidth: dateTimeLayout.implicitWidth
+            Button {
+                id: btnAdd
+                text: qsTr("<-- Add")
 
-                RowLayout {
-                    id: dateTimeLayout
-                    Layout.fillWidth: true
-
-                    GroupBox {
-                        title: qsTr("Start")
-
-                        DateTimeWidget {
-                            id: startDate
-                        }
-                    }
-
-                    GroupBox {
-                        title: qsTr("End")
-
-                        DateTimeWidget {
-                            id: endDate
-                        }
-                    }
+                onClicked: {
+                    addTimeClicked(new Date(startDate.date.getFullYear(),
+                                            startDate.date.getMonth(),
+                                            startDate.date.getDate(),
+                                            startDate.hours,
+                                            startDate.minutes),
+                                   new Date(endDate.date.getFullYear(),
+                                            endDate.date.getMonth(),
+                                            endDate.date.getDate(),
+                                            endDate.hours,
+                                            endDate.minutes));
                 }
+            }
 
-                Button {
-                    id: btnAdd
-                    text: qsTr("Add")
-                    Layout.fillWidth: true
+            RowLayout {
+                id: dateTimeLayout
+                Layout.fillWidth: true
+                Layout.fillHeight: true
 
-                    onClicked: {
-                        addTimeClicked(new Date(startDate.date.getFullYear(),
-                                                startDate.date.getMonth(),
-                                                startDate.date.getDate(),
-                                                startDate.hours,
-                                                startDate.minutes),
-                                       new Date(endDate.date.getFullYear(),
-                                                endDate.date.getMonth(),
-                                                endDate.date.getDate(),
-                                                endDate.hours,
-                                                endDate.minutes));
+                GroupBox {
+                    title: qsTr("Start")
+
+                    DateTimeWidget {
+                        id: startDate
                     }
                 }
 
                 GroupBox {
-                    title: qsTr("Total Time")
-                    Layout.fillWidth: true
+                    title: qsTr("End")
 
-                    Label {
-                        id: totalTimeLabel
-                        anchors.centerIn: parent
-                        text: "000\n00h 00m\n0.0h"
+                    DateTimeWidget {
+                        id: endDate
                     }
                 }
-
-                Item { Layout.fillHeight: true }
             }
+
+            GroupBox {
+                title: qsTr("Total Time")
+                Layout.fillHeight: true
+
+                Label {
+                    id: totalTimeLabel
+                    anchors.centerIn: parent
+                }
+            }
+
+            Item { Layout.fillWidth: true }
         }
     }
 }

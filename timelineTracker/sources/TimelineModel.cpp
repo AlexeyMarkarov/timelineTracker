@@ -84,3 +84,9 @@ void TimelineModel::removeRow(const int row)
 {
     QAbstractListModel::removeRow(row);
 }
+
+QString TimelineModel::getStdText() const
+{
+    const QDateTime dt = QDateTime::currentDateTime();
+    return dt.toString() + QStringLiteral(" - ") + dt.toString();
+}
