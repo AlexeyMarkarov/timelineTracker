@@ -124,6 +124,7 @@ void MainController::updateChart()
     valueAxis->setMin(0);
     valueAxis->setMax((minutesNumber + 1) * minutesMultiplier);
     valueAxis->setTickCount(minutesNumber + 2);
+    valueAxis->setTitleText(tr("Minutes"));
 
     // add data that is not already in chart
     for(const TimeSpan &span : timeline)

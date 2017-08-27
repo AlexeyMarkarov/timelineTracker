@@ -33,6 +33,7 @@ ApplicationWindow {
 
         GroupBox {
             title: qsTr("Timeline")
+            padding: 0
             Layout.minimumHeight: 100
             Layout.minimumWidth: 100
             Layout.fillWidth: true
@@ -41,6 +42,12 @@ ApplicationWindow {
             ChartView {
                 id: chartView
                 anchors.fill: parent
+                margins {
+                    top: 0
+                    bottom: 0
+                    left: 0
+                    right: 0
+                }
             }
         }
 
@@ -96,52 +103,65 @@ ApplicationWindow {
                     }
 
                     ScrollBar.vertical: ScrollBar {}
-
-                    DelayButton {
-                        id: removeRowButton
-                        visible: timelineListView.currentIndex >= 0
-                        x: timelineListView.currentItem !== null ?
-                               Math.min(timelineListView.currentItem.x + timelineListView.currentItem.width, timelineListView.width - width) :
-                               0
-                        y: timelineListView.currentItem !== null ?
-                               timelineListView.currentItem.y :
-                               0
-                        height: timelineListView.currentItem !== null ? timelineListView.currentItem.height : 0
-                        width: height
-                        text: "x"
-                        delay: 1000
-                        transition: Transition {
-                            NumberAnimation {
-                                duration: removeRowButton.delay
-                                properties: "progress"
-                                easing.type: Easing.OutCirc
-                            }
-                        }
-
-                        onActivated: {
-                            removeTimeEntry(timelineListView.currentIndex);
-                            toggle();
-                        }
-                    }
                 }
             }
 
-            Button {
-                id: btnAdd
-                text: qsTr("<-- Add")
-
-                onClicked: {
-                    addTimeClicked(new Date(startDate.date.getFullYear(),
-                                            startDate.date.getMonth(),
-                                            startDate.date.getDate(),
-                                            startDate.hours,
-                                            startDate.minutes),
-                                   new Date(endDate.date.getFullYear(),
-                                            endDate.date.getMonth(),
-                                            endDate.date.getDate(),
-                                            endDate.hours,
-                                            endDate.minutes));
+            ColumnLayout {
+                Layout.fillHeight: true
+                Layout.maximumWidth: {
+                    var w = 0;
+                    for(var i = 0; i < children.length; ++i) {
+                        w = Math.max(w, children[i].implicitWidth);
+                    }
+                    return w;
                 }
+
+                Item { Layout.fillHeight: true }
+
+                Button {
+                    text: qsTr("<-- Add <--")
+                    Layout.fillWidth: true
+
+                    onClicked: {
+                        addTimeClicked(new Date(startDate.date.getFullYear(),
+                                                startDate.date.getMonth(),
+                                                startDate.date.getDate(),
+                                                startDate.hours,
+                                                startDate.minutes),
+                                       new Date(endDate.date.getFullYear(),
+                                                endDate.date.getMonth(),
+                                                endDate.date.getDate(),
+                                                endDate.hours,
+                                                endDate.minutes));
+                    }
+                }
+
+                Button {
+                    text: qsTr("--> Edit -->")
+                    Layout.fillWidth: true
+                }
+
+                DelayButton {
+                    id: removeButton
+                    text: qsTr("--> Remove <--")
+                    Layout.fillWidth: true
+
+                    delay: 1000
+                    transition: Transition {
+                        NumberAnimation {
+                            duration: removeButton.delay
+                            properties: "progress"
+                            easing.type: Easing.OutCirc
+                        }
+                    }
+
+                    onActivated: {
+                        removeTimeEntry(timelineListView.currentIndex);
+                        toggle();
+                    }
+                }
+
+                Item { Layout.fillHeight: true }
             }
 
             RowLayout {
@@ -173,6 +193,7 @@ ApplicationWindow {
                 Label {
                     id: totalTimeLabel
                     anchors.centerIn: parent
+                    horizontalAlignment: Text.AlignHCenter
                 }
             }
 
