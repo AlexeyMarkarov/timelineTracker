@@ -4,6 +4,8 @@
 #include <QtCore>
 #include <QtQml>
 
+class ChartView;
+
 class MainWindow : public QObject
 {
     Q_OBJECT
@@ -13,7 +15,7 @@ public:
     ~MainWindow();
 
     bool isCreated() const;
-
+    ChartView &getChartView() const;
     void setTimeModel(QAbstractItemModel *model);
     void setTotalTimeText(const QString text);
 
@@ -25,6 +27,7 @@ private:
     QQmlEngine mEngine;
     QQmlComponent *mRootComponent;
     QObject *mWindow;
+    ChartView *mChart;
 
     void createMembers();
     void connectSignals();

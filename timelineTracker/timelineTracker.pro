@@ -1,16 +1,20 @@
-QT += qml quick
+QT += gui qml quick widgets charts
 
 CONFIG += c++11 warn_on
 
 HEADERS += \
     sources/MainController.h \
     sources/MainWindow.h \
-    sources/TimelineModel.h
+    sources/TimelineModel.h \
+    sources/ChartView.h \
+    sources/TimeSpan.h
 
 SOURCES += sources/main.cpp \
     sources/MainController.cpp \
     sources/MainWindow.cpp \
-    sources/TimelineModel.cpp
+    sources/TimelineModel.cpp \
+    sources/ChartView.cpp \
+    sources/TimeSpan.cpp
 
 RESOURCES += resources/qml.qrc
 

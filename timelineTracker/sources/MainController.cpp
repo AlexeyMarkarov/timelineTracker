@@ -1,6 +1,8 @@
 #include "MainController.h"
 #include "MainWindow.h"
 #include "TimelineModel.h"
+#include "ChartView.h"
+#include <QtCharts>
 
 MainController::MainController(QObject *parent)
     : QObject(parent)
@@ -20,15 +22,130 @@ bool MainController::init()
     connect(mWnd, &MainWindow::addTimeClicked,  mTimeline, QOverload<const QDateTime, const QDateTime>::of(&TimelineModel::addTime));
     connect(mWnd, &MainWindow::removeTimeEntry, mTimeline, &TimelineModel::removeRow);
 
-    connect(mTimeline, &TimelineModel::rowsInserted,    this, &MainController::updateTotalTime);
-    connect(mTimeline, &TimelineModel::rowsRemoved,     this, &MainController::updateTotalTime);
-    connect(mTimeline, &TimelineModel::dataChanged,     this, &MainController::updateTotalTime);
+    connect(mTimeline, &TimelineModel::rowsInserted,    this, &MainController::updateOutput);
+    connect(mTimeline, &TimelineModel::rowsRemoved,     this, &MainController::updateOutput);
+    connect(mTimeline, &TimelineModel::dataChanged,     this, &MainController::updateOutput);
 
     return mWnd->isCreated();
 }
 
 void MainController::release()
 {
+}
+
+void MainController::updateOutput()
+{
+    updateChart();
+    updateTotalTime();
+}
+
+void MainController::updateChart()
+{
+    static const QByteArray kPropSpanId("timespanId");
+
+    const QVector<TimeSpan> timeline = mTimeline->getTimeline();
+    if(timeline.isEmpty())
+    {
+        mWnd->getChartView().removeAllSeries();
+        return;
+    }
+
+    // create series<->id map
+    QHash<QString, QAbstractSeries*> mapIdToSeries;
+    for(int i = 0; i < mWnd->getChartView().count(); ++i)
+    {
+        if(QAbstractSeries *series = mWnd->getChartView().series(i))
+        {
+            mapIdToSeries.insert(series->property(kPropSpanId).toString(), series);
+        }
+    }
+
+    // remove data from chart that is not in current timeline
+    for(auto iter = mapIdToSeries.constBegin(); iter != mapIdToSeries.constEnd();)
+    {
+        const QString spanId = iter.key();
+        const auto spanIter = std::find_if(timeline.constBegin(),
+                                           timeline.constEnd(),
+                                           [spanId](const TimeSpan &ts) { return ts.id == spanId; });
+        if(spanIter == timeline.constEnd())
+        {
+            mWnd->getChartView().removeSeries(iter.value());
+            iter = mapIdToSeries.erase(iter);
+        }
+        else
+        {
+            ++iter;
+        }
+    }
+
+    // try to find required axes
+    const QVector<QAbstractAxis*> axes = mWnd->getChartView().axes();
+    QDateTimeAxis *dateTimeAxis = nullptr;
+    QValueAxis *valueAxis = nullptr;
+    for(QAbstractAxis *axis : axes)
+    {
+        if(QDateTimeAxis *dtAxis = qobject_cast<QDateTimeAxis*>(axis))
+        {
+            dateTimeAxis = dtAxis;
+        }
+        else if(QValueAxis *vAxis = qobject_cast<QValueAxis*>(axis))
+        {
+            valueAxis = vAxis;
+        }
+    }
+    // create axes if they don't already exist
+    if(!dateTimeAxis)
+        dateTimeAxis = new QDateTimeAxis(&mWnd->getChartView());
+    if(!valueAxis)
+        valueAxis = new QValueAxis(&mWnd->getChartView());
+
+    // calc chart boundaries
+    QDateTime minDt = timeline.first().start, maxDt = timeline.first().end;
+    qint64 maxMsec = timeline.first().getSpanMsec();
+    for(const TimeSpan &span : timeline)
+    {
+        minDt = std::min(minDt, span.start);
+        maxDt = std::max(maxDt, span.end);
+        maxMsec = std::max(maxMsec, span.getSpanMsec());
+    }
+
+    // set chart boundaries
+    dateTimeAxis->setMin(minDt.addSecs(-60 * 60));
+    dateTimeAxis->setMax(maxDt.addSecs(60 * 60));
+    valueAxis->setMin(0);
+    valueAxis->setMax(maxMsec / 1000 / 60 + (maxMsec / 1000 / 60 * 0.1));
+
+    // add data that is not already in chart
+    for(const TimeSpan &span : timeline)
+    {
+        if(mapIdToSeries.contains(span.id))
+        {
+            // TODO: update series data
+        }
+        else
+        {
+            QAbstractSeries *series = mWnd->getChartView().createSeries(QAbstractSeries::SeriesTypeArea,
+                                                                        QString("%1 - %2")
+                                                                        .arg(span.start.time().toString("HH:mm"))
+                                                                        .arg(span.end.time().toString("HH:mm")),
+                                                                        dateTimeAxis,
+                                                                        valueAxis);
+            if(QAreaSeries *areaSeries = qobject_cast<QAreaSeries*>(series))
+            {
+                QLineSeries *lineSeries = new QLineSeries(areaSeries);
+                lineSeries->append(span.start.toMSecsSinceEpoch(), span.getSpanMsec() / 1000 / 60);
+                lineSeries->append(span.end.toMSecsSinceEpoch(), span.getSpanMsec() / 1000 / 60);
+
+                areaSeries->setUpperSeries(lineSeries);
+                areaSeries->setOpacity(0.5);
+                areaSeries->setProperty(kPropSpanId, span.id);
+            }
+            else
+            {
+                mWnd->getChartView().removeSeries(series);
+            }
+        }
+    }
 }
 
 void MainController::updateTotalTime()

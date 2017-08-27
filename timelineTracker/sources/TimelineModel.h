@@ -2,27 +2,7 @@
 #define TIMELINEMODEL_H
 
 #include <QtCore>
-
-class TimeSpan
-{
-public:
-    QDateTime start;
-    QDateTime end;
-
-    TimeSpan(const QDateTime s = QDateTime(), const QDateTime e = QDateTime())
-        : start(std::min(s, e)), end(std::max(s, e))
-    {}
-
-    bool isValid() const
-    {
-        return start.isValid() && end.isValid();
-    }
-
-    qint64 getSpanMsec() const
-    {
-        return start.msecsTo(end);
-    }
-};
+#include "TimeSpan.h"
 
 class TimelineModel : public QAbstractListModel
 {

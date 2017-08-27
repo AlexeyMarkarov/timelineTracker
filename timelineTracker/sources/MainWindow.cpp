@@ -1,7 +1,9 @@
 #include "MainWindow.h"
+#include "ChartView.h"
 
 MainWindow::MainWindow(QObject *parent)
     : QObject(parent)
+    , mChart(new ChartView(this))
 {
     createMembers();
     connectSignals();
@@ -19,6 +21,7 @@ void MainWindow::createMembers()
     {
         mWindow = obj;
         mWindow->setParent(this);
+        mChart->setWrappedObject(QQmlProperty::read(mWindow, "chart").value<QObject*>());
     }
     else
     {
@@ -48,4 +51,9 @@ void MainWindow::setTimeModel(QAbstractItemModel *model)
 void MainWindow::setTotalTimeText(const QString text)
 {
     QQmlProperty::write(mWindow, "totalTimeText", text);
+}
+
+ChartView &MainWindow::getChartView() const
+{
+    return *mChart;
 }

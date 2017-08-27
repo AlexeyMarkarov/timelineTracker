@@ -17,11 +17,14 @@ public:
     void release();
 
 private slots:
-    void updateTotalTime();
+    void updateOutput();
 
 private:
     MainWindow *mWnd;
     TimelineModel *mTimeline;
+
+    void updateChart();
+    void updateTotalTime();
 };
 
 #endif // MAINCONTROLLER_H
