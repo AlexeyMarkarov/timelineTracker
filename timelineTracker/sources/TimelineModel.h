@@ -16,6 +16,9 @@ public:
         R_EndDateTime
     };
 
+    // Get a general representation of what R_TotalSpan usually contains. Used for UI layouts.
+    static QString getStdText();
+
     TimelineModel(QObject *parent = nullptr);
     ~TimelineModel();
 
@@ -25,8 +28,8 @@ public:
     virtual QHash<int, QByteArray> roleNames() const override;
     virtual bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
 
+    // Get all stored time spans
     QVector<TimeSpan> getTimeline() const;
-    Q_INVOKABLE QString getStdText() const;
 
 public slots:
     void addTime(const TimeSpan time);

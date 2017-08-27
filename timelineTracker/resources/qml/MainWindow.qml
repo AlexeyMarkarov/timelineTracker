@@ -8,11 +8,10 @@ ApplicationWindow {
     visible: true
     minimumHeight: mainLayout.implicitHeight + mainLayout.anchors.margins * 2
     minimumWidth: mainLayout.implicitWidth + mainLayout.anchors.margins * 2
-    width: minimumWidth
-    height: minimumHeight
     title: qsTr("Timeline Tracker")
 
     property var timeModel
+    property var timeModelStdText: ""
     property alias totalTimeText: totalTimeLabel.text
     property alias chart: chartView
 
@@ -61,9 +60,7 @@ ApplicationWindow {
                 title: qsTr("Intervals")
                 padding: 1
                 Layout.fillHeight: true
-                Layout.preferredWidth: (timeModel !== undefined ?
-                                            intervalsFontMetrics.boundingRect(timeModel.getStdText()).width :
-                                            100) +
+                Layout.preferredWidth: intervalsFontMetrics.boundingRect(timeModelStdText).width +
                                        padding * 2 +
                                        intervalsFontMetrics.maximumCharacterWidth
 
@@ -92,6 +89,7 @@ ApplicationWindow {
                             anchors.centerIn: parent
                             color: ListView.isCurrentItem ? syspalActive.highlightedText : syspalActive.text
                             font: intervalsFontMetrics.font
+                            horizontalAlignment: Text.AlignHCenter
                         }
 
                         MouseArea {
@@ -136,14 +134,10 @@ ApplicationWindow {
                     }
                 }
 
-                Button {
-                    text: qsTr("--> Edit -->")
-                    Layout.fillWidth: true
-                }
-
                 DelayButton {
                     id: removeButton
                     text: qsTr("--> Remove <--")
+                    enabled: timelineListView.currentIndex >= 0
                     Layout.fillWidth: true
 
                     delay: 1000
@@ -157,7 +151,9 @@ ApplicationWindow {
 
                     onActivated: {
                         removeTimeEntry(timelineListView.currentIndex);
-                        toggle();
+                    }
+                    onReleased: {
+                        checked = false;
                     }
                 }
 

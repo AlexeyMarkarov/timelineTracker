@@ -1,5 +1,6 @@
 #include "MainWindow.h"
 #include "ChartView.h"
+#include "TimelineModel.h"
 
 MainWindow::MainWindow(QObject *parent)
     : QObject(parent)
@@ -22,6 +23,12 @@ void MainWindow::createMembers()
         mWindow = obj;
         mWindow->setParent(this);
         mChart->setWrappedObject(QQmlProperty::read(mWindow, "chart").value<QObject*>());
+
+        // set default text for intervals view which will change window's minimum size
+        QQmlProperty::write(mWindow, "timeModelStdText", TimelineModel::getStdText());
+        // and refresh window actual size based on minimum size
+        QQmlProperty::write(mWindow, "width", QQmlProperty::read(mWindow, "minimumWidth"));
+        QQmlProperty::write(mWindow, "height", QQmlProperty::read(mWindow, "minimumHeight"));
     }
     else
     {
