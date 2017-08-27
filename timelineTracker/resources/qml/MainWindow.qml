@@ -51,6 +51,8 @@ ApplicationWindow {
         }
 
         RowLayout {
+            spacing: 0
+            readonly property int spacingPrivate: 6
             Layout.fillWidth: true
             Layout.maximumHeight: dateTimeLayout.implicitHeight
 
@@ -62,7 +64,7 @@ ApplicationWindow {
                 Layout.fillHeight: true
                 Layout.preferredWidth: intervalsFontMetrics.boundingRect(timeModelStdText).width +
                                        padding * 2 +
-                                       intervalsFontMetrics.maximumCharacterWidth
+                                       intervalsFontMetrics.averageCharacterWidth
 
                 FontMetrics {
                     id: intervalsFontMetrics
@@ -76,7 +78,7 @@ ApplicationWindow {
 
                     delegate: Rectangle {
                         implicitHeight: totalSpanLabel.paintedHeight + intervalsFontMetrics.height
-                        implicitWidth: totalSpanLabel.paintedWidth + intervalsFontMetrics.maximumCharacterWidth
+                        implicitWidth: totalSpanLabel.paintedWidth + intervalsFontMetrics.averageCharacterWidth
                         color: ListView.isCurrentItem ?
                                    syspalActive.highlight :
                                    (index % 2 ?
@@ -103,6 +105,8 @@ ApplicationWindow {
                     ScrollBar.vertical: ScrollBar {}
                 }
             }
+
+            Item { Layout.preferredWidth: parent.spacingPrivate }
 
             ColumnLayout {
                 Layout.fillHeight: true
@@ -160,6 +164,8 @@ ApplicationWindow {
                 Item { Layout.fillHeight: true }
             }
 
+            Item { Layout.preferredWidth: parent.spacingPrivate }
+
             RowLayout {
                 id: dateTimeLayout
                 Layout.fillWidth: true
@@ -181,6 +187,8 @@ ApplicationWindow {
                     }
                 }
             }
+
+            Item { Layout.preferredWidth: parent.spacingPrivate }
 
             GroupBox {
                 title: qsTr("Total Time")
