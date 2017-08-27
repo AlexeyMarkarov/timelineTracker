@@ -25,6 +25,7 @@ private:
 
     void updateChart();
     void updateTotalTime();
+    static QDateTime roundHour(const QDateTime &dt);
 };
 
 #endif // MAINCONTROLLER_H

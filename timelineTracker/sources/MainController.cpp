@@ -110,10 +110,14 @@ void MainController::updateChart()
     }
 
     // set chart boundaries
-    dateTimeAxis->setMin(minDt.addSecs(-60 * 60));
-    dateTimeAxis->setMax(maxDt.addSecs(60 * 60));
+    dateTimeAxis->setMin(roundHour(minDt).addSecs(-60 * 60));
+    dateTimeAxis->setMax(roundHour(maxDt).addSecs(60 * 60));
+    const int maxMinutes = maxMsec / 1000 / 60;
+    const int minutesMultiplier = powf(10.0f, floorf(log10f(maxMinutes))) + 0.5f;
+    const int minutesNumber = maxMinutes / minutesMultiplier;
     valueAxis->setMin(0);
-    valueAxis->setMax(maxMsec / 1000 / 60 + (maxMsec / 1000 / 60 * 0.1));
+    valueAxis->setMax((minutesNumber + 1) * minutesMultiplier);
+    valueAxis->setTickCount(minutesNumber + 2);
 
     // add data that is not already in chart
     for(const TimeSpan &span : timeline)
@@ -125,7 +129,7 @@ void MainController::updateChart()
         else
         {
             QAbstractSeries *series = mWnd->getChartView().createSeries(QAbstractSeries::SeriesTypeArea,
-                                                                        QString("%1 - %2")
+                                                                        QString("%1<br/>%2")
                                                                         .arg(span.start.time().toString("HH:mm"))
                                                                         .arg(span.end.time().toString("HH:mm")),
                                                                         dateTimeAxis,
@@ -139,6 +143,7 @@ void MainController::updateChart()
                 areaSeries->setUpperSeries(lineSeries);
                 areaSeries->setOpacity(0.5);
                 areaSeries->setProperty(kPropSpanId, span.id);
+                areaSeries->setPointsVisible();
             }
             else
             {
@@ -172,4 +177,12 @@ void MainController::updateTotalTime()
     mWnd->setTotalTimeText(QString("%1 minutes\n%2 hours")
                            .arg(totalTimeMsec / 1000 / 60)
                            .arg(totalTimeMsec / 1000.0 / 60.0 / 60.0, 0, 'f', 2));
+}
+
+QDateTime MainController::roundHour(const QDateTime &dt)
+{
+    return dt
+            .addMSecs(-dt.time().msec())
+            .addSecs(-dt.time().second())
+            .addSecs(-dt.time().minute() * 60);
 }

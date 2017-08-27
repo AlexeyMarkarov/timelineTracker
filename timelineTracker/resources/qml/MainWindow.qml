@@ -31,12 +31,17 @@ ApplicationWindow {
             margins: 5
         }
 
-        ChartView {
-            id: chartView
+        GroupBox {
+            title: qsTr("Timeline")
             Layout.minimumHeight: 100
             Layout.minimumWidth: 100
             Layout.fillWidth: true
             Layout.fillHeight: true
+
+            ChartView {
+                id: chartView
+                anchors.fill: parent
+            }
         }
 
         RowLayout {
@@ -44,7 +49,7 @@ ApplicationWindow {
             Layout.maximumHeight: toolsLayout.implicitHeight
 
             GroupBox {
-                title: qsTr("Timeline")
+                title: qsTr("Intervals")
                 Layout.fillHeight: true
                 Layout.fillWidth: true
 
