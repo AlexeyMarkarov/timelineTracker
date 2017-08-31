@@ -2,6 +2,7 @@
 #include "MainWindow.h"
 #include "TimelineModel.h"
 #include "ChartView.h"
+#include "Settings.h"
 #include <QtCharts>
 
 MainController::MainController(QObject *parent)
@@ -31,6 +32,7 @@ bool MainController::init()
 
 void MainController::release()
 {
+    Settings::set(Settings::Type::FirstRun, false);
 }
 
 void MainController::updateOutput()

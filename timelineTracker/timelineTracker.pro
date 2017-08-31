@@ -7,14 +7,16 @@ HEADERS += \
     sources/MainWindow.h \
     sources/TimelineModel.h \
     sources/ChartView.h \
-    sources/TimeSpan.h
+    sources/TimeSpan.h \
+    sources/Settings.h
 
 SOURCES += sources/main.cpp \
     sources/MainController.cpp \
     sources/MainWindow.cpp \
     sources/TimelineModel.cpp \
     sources/ChartView.cpp \
-    sources/TimeSpan.cpp
+    sources/TimeSpan.cpp \
+    sources/Settings.cpp
 
 RESOURCES += resources/qml.qrc
 
