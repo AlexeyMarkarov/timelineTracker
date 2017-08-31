@@ -6,7 +6,7 @@ import QtCharts 2.2
 ApplicationWindow {
     id: mainWindow
     visible: true
-    minimumHeight: mainLayout.implicitHeight + mainLayout.anchors.margins * 2
+    minimumHeight: Math.max(mainLayout.implicitHeight + mainLayout.anchors.margins * 2, 600)
     minimumWidth: mainLayout.implicitWidth + mainLayout.anchors.margins * 2
     title: qsTr("Timeline Tracker")
 

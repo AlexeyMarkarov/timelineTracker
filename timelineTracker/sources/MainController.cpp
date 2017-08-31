@@ -116,7 +116,7 @@ void MainController::updateChart()
     }
 
     // set chart boundaries
-    dateTimeAxis->setMin(roundHour(minDt).addSecs(-60 * 60));
+    dateTimeAxis->setMin(roundHour(minDt));
     dateTimeAxis->setMax(roundHour(maxDt).addSecs(60 * 60));
     const int maxMinutes = maxMsec / 1000 / 60;
     const int minutesMultiplier = powf(10.0f, floorf(log10f(maxMinutes))) + 0.5f;
