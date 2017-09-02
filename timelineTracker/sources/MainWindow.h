@@ -3,6 +3,7 @@
 
 #include <QtCore>
 #include <QtQml>
+#include <QtGui>
 
 class ChartView;
 
@@ -14,6 +15,16 @@ public:
     MainWindow(QObject *parent = nullptr);
     ~MainWindow();
 
+    // QML Window interface
+    QWindow::Visibility getVisibility() const;
+    void setVisibility(const QWindow::Visibility visibility);
+    QSize getSize() const;
+    void setSize(const QSize &size);
+    QSize getMinimumSize() const;
+    void setMinimumSize(const QSize &size);
+    QPoint getPosition() const;
+    void setPosition(const QPoint &pos);
+
     bool isCreated() const;
     ChartView &getChartView() const;
     void setTimeModel(QAbstractItemModel *model);
@@ -22,6 +33,7 @@ public:
 signals:
     void addTimeClicked(const QDateTime start, const QDateTime end);
     void removeTimeEntry(const int index);
+    void closing();
 
 private:
     QQmlEngine mEngine;

@@ -1,6 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
+import QtQuick.Window 2.2
 import QtCharts 2.2
 
 ApplicationWindow {
@@ -17,6 +18,12 @@ ApplicationWindow {
 
     signal addTimeClicked(date start, date end)
     signal removeTimeEntry(int index)
+    signal closeRequested
+
+    onClosing: {
+        close.accepted = false;
+        closeRequested();
+    }
 
     SystemPalette {
         id: syspalActive

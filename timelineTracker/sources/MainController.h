@@ -18,6 +18,7 @@ public:
 
 private slots:
     void updateOutput();
+    void onWindowClosing();
 
 private:
     MainWindow *mWnd;

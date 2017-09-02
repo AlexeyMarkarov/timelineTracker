@@ -10,7 +10,10 @@ class Settings
 public:
     enum class Type
     {
-        FirstRun
+        FirstRun,
+        WindowVisibility,
+        WindowPosition,
+        WindowSize
     };
     Q_ENUM(Type)
 

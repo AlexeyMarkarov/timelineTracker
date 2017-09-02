@@ -43,6 +43,8 @@ void MainWindow::connectSignals()
             this, SIGNAL(addTimeClicked(const QDateTime, const QDateTime)));
     connect(mWindow, SIGNAL(removeTimeEntry(const int)),
             this, SIGNAL(removeTimeEntry(const int)));
+    connect(mWindow, SIGNAL(closeRequested()),
+            this, SIGNAL(closing()));
 }
 
 bool MainWindow::isCreated() const
@@ -63,4 +65,47 @@ void MainWindow::setTotalTimeText(const QString text)
 ChartView &MainWindow::getChartView() const
 {
     return *mChart;
+}
+
+QWindow::Visibility MainWindow::getVisibility() const
+{
+    return static_cast<QWindow::Visibility>(QQmlProperty::read(mWindow, "visibility").toInt());
+}
+
+void MainWindow::setVisibility(const QWindow::Visibility visibility)
+{
+    QQmlProperty::write(mWindow, "visibility", visibility);
+}
+
+QSize MainWindow::getSize() const
+{
+    return QSize(QQmlProperty::read(mWindow, "width").toInt(), QQmlProperty::read(mWindow, "height").toInt());
+}
+
+void MainWindow::setSize(const QSize &size)
+{
+    QQmlProperty::write(mWindow, "width", size.width());
+    QQmlProperty::write(mWindow, "height", size.height());
+}
+
+QSize MainWindow::getMinimumSize() const
+{
+    return QSize(QQmlProperty::read(mWindow, "minimumWidth").toInt(), QQmlProperty::read(mWindow, "minimumHeight").toInt());
+}
+
+void MainWindow::setMinimumSize(const QSize &size)
+{
+    QQmlProperty::write(mWindow, "minimumWidth", size.width());
+    QQmlProperty::write(mWindow, "minimumHeight", size.height());
+}
+
+QPoint MainWindow::getPosition() const
+{
+    return QPoint(QQmlProperty::read(mWindow, "x").toInt(), QQmlProperty::read(mWindow, "y").toInt());
+}
+
+void MainWindow::setPosition(const QPoint &pos)
+{
+    QQmlProperty::write(mWindow, "x", pos.x());
+    QQmlProperty::write(mWindow, "y", pos.y());
 }

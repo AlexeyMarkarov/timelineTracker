@@ -22,10 +22,39 @@ bool MainController::init()
 
     connect(mWnd, &MainWindow::addTimeClicked,  mTimeline, QOverload<const QDateTime, const QDateTime>::of(&TimelineModel::addTime));
     connect(mWnd, &MainWindow::removeTimeEntry, mTimeline, &TimelineModel::removeRow);
+    connect(mWnd, &MainWindow::closing, this, &MainController::onWindowClosing);
 
     connect(mTimeline, &TimelineModel::rowsInserted,    this, &MainController::updateOutput);
     connect(mTimeline, &TimelineModel::rowsRemoved,     this, &MainController::updateOutput);
     connect(mTimeline, &TimelineModel::dataChanged,     this, &MainController::updateOutput);
+
+    if(mWnd->isCreated())
+    {
+        QWindow::Visibility visibility = static_cast<QWindow::Visibility>(Settings::get(Settings::Type::WindowVisibility).toInt());
+        switch(visibility)
+        {
+        case QWindow::Windowed:
+        case QWindow::Minimized:
+        case QWindow::Maximized:
+        case QWindow::FullScreen:
+        case QWindow::AutomaticVisibility:
+            // do nothing
+            break;
+
+        default:
+            visibility = QWindow::Windowed;
+        }
+
+        const QRect prevWindowRect = QRect(Settings::get(Settings::Type::WindowPosition).toPoint(),
+                                           Settings::get(Settings::Type::WindowSize).toSize())
+                                     .normalized()
+                                     .intersected(qApp->desktop()->availableGeometry())
+                                     .adjusted(0, qApp->style()->pixelMetric(QStyle::PM_TitleBarHeight), 0, 0);
+
+        mWnd->setPosition(prevWindowRect.topLeft());
+        mWnd->setSize(prevWindowRect.size().expandedTo(mWnd->getMinimumSize()));
+        mWnd->setVisibility(visibility);
+    }
 
     return mWnd->isCreated();
 }
@@ -33,6 +62,9 @@ bool MainController::init()
 void MainController::release()
 {
     Settings::set(Settings::Type::FirstRun, false);
+    Settings::set(Settings::Type::WindowPosition, mWnd->getPosition());
+    Settings::set(Settings::Type::WindowSize, mWnd->getSize());
+    Settings::set(Settings::Type::WindowVisibility, mWnd->getVisibility());
 }
 
 void MainController::updateOutput()
@@ -194,4 +226,9 @@ QDateTime MainController::roundHour(const QDateTime &dt)
             .addMSecs(-dt.time().msec())
             .addSecs(-dt.time().second())
             .addSecs(-dt.time().minute() * 60);
+}
+
+void MainController::onWindowClosing()
+{
+    qApp->exit();
 }
