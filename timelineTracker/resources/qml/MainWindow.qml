@@ -3,6 +3,7 @@ import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import QtQuick.Window 2.2
 import QtCharts 2.2
+import Qt.Widgets 1.0
 
 ApplicationWindow {
     id: mainWindow
@@ -12,7 +13,7 @@ ApplicationWindow {
     title: qsTr("Timeline Tracker")
 
     property var timeModel
-    property var timeModelStdText: ""
+    property string timeModelStdText: ""
     property alias totalTimeText: totalTimeLabel.text
     property alias chart: chartView
 
@@ -25,6 +26,15 @@ ApplicationWindow {
         closeRequested();
     }
 
+    Component.onCompleted: {
+        if(minimumWidth >= 1280) {
+            console.log("Exceeded recommended minimum width: " + minimumWidth)
+        }
+        if(minimumHeight >= 680) {
+            console.log("Exceeded recommended minimum height: " + minimumHeight)
+        }
+    }
+
     SystemPalette {
         id: syspalActive
         colorGroup: SystemPalette.Active
@@ -35,6 +45,24 @@ ApplicationWindow {
         anchors {
             fill: parent
             margins: 5
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+
+            Item { Layout.fillWidth: true }
+
+            RoundButton {
+                background: Rectangle {
+                    implicitHeight: parent.contentItem.implicitHeight
+                    implicitWidth: parent.contentItem.implicitWidth
+                    radius: parent.radius
+                    color: syspalActive.button
+                }
+                contentItem: Image {
+                    source: "image://pixmapProvider/stdpixmap/" + QStyle.SP_TitleBarContextHelpButton
+                }
+            }
         }
 
         GroupBox {

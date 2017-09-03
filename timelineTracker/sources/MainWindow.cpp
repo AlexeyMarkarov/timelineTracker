@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 #include "ChartView.h"
 #include "TimelineModel.h"
+#include "QmlPixmapProvider.h"
 
 MainWindow::MainWindow(QObject *parent)
     : QObject(parent)
@@ -16,6 +17,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::createMembers()
 {
+    mEngine.addImageProvider("pixmapProvider", new QmlPixmapProvider);
     mRootComponent = new QQmlComponent(&mEngine);
     mRootComponent->loadUrl(QUrl("qrc:/qml/MainWindow.qml"), QQmlComponent::PreferSynchronous);
     if(QObject *obj = mRootComponent->create())

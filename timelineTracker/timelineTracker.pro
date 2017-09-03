@@ -8,7 +8,8 @@ HEADERS += \
     sources/TimelineModel.h \
     sources/ChartView.h \
     sources/TimeSpan.h \
-    sources/Settings.h
+    sources/Settings.h \
+    sources/QmlPixmapProvider.h
 
 SOURCES += sources/main.cpp \
     sources/MainController.cpp \
@@ -16,7 +17,8 @@ SOURCES += sources/main.cpp \
     sources/TimelineModel.cpp \
     sources/ChartView.cpp \
     sources/TimeSpan.cpp \
-    sources/Settings.cpp
+    sources/Settings.cpp \
+    sources/QmlPixmapProvider.cpp
 
 RESOURCES += resources/qml.qrc
 

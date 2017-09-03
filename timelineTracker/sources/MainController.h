@@ -2,6 +2,8 @@
 #define MAINCONTROLLER_H
 
 #include <QtCore>
+#include <QtCharts>
+#include <QtWidgets>
 
 class MainWindow;
 class TimelineModel;
