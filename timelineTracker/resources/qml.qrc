@@ -3,5 +3,6 @@
         <file>qtquickcontrols2.conf</file>
         <file>qml/MainWindow.qml</file>
         <file>qml/DateTimeWidget.qml</file>
+        <file>qml/HelpItem.qml</file>
     </qresource>
 </RCC>

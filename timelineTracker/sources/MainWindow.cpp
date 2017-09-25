@@ -111,3 +111,8 @@ void MainWindow::setPosition(const QPoint &pos)
     QQmlProperty::write(mWindow, "x", pos.x());
     QQmlProperty::write(mWindow, "y", pos.y());
 }
+
+void MainWindow::setFlashHelpIndicator(const bool flash)
+{
+    QQmlProperty::write(mWindow, "flashHelpIndicator", flash);
+}

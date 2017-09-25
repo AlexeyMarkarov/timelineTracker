@@ -24,6 +24,7 @@ public:
     void setMinimumSize(const QSize &size);
     QPoint getPosition() const;
     void setPosition(const QPoint &pos);
+    void setFlashHelpIndicator(const bool flash);
 
     bool isCreated() const;
     ChartView &getChartView() const;

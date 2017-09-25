@@ -3,6 +3,7 @@
 #include "TimelineModel.h"
 #include "ChartView.h"
 #include "Settings.h"
+#include "Util.h"
 
 MainController::MainController(QObject *parent)
     : QObject(parent)
@@ -15,7 +16,9 @@ MainController::~MainController()
 
 bool MainController::init()
 {
+    qRegisterMetaType<QStyle::PixelMetric>("QStyle::PixelMetric");
     qmlRegisterUncreatableMetaObject(QStyle::staticMetaObject, "Qt.Widgets", 1, 0, "QStyle", "QStyle metaobject only.");
+    qmlRegisterSingletonType<Util>("TimelineTracker", 1, 0, "Util", Util::qmlSingletonProvider);
 
     mTimeline = new TimelineModel(this);
     mWnd = new MainWindow(this);
@@ -55,6 +58,7 @@ bool MainController::init()
         mWnd->setPosition(prevWindowRect.topLeft());
         mWnd->setSize(prevWindowRect.size().expandedTo(mWnd->getMinimumSize()));
         mWnd->setVisibility(visibility);
+        mWnd->setFlashHelpIndicator(Settings::get(Settings::Type::FirstRun).toBool());
     }
 
     return mWnd->isCreated();
