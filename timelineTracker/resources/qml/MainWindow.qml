@@ -122,12 +122,12 @@ ApplicationWindow {
                         ColorAnimation {
                             from: syspalActive.button
                             to: syspalActive.highlight
-                            duration: 1000
+                            duration: Qt.styleHints.cursorFlashTime
                         }
                         ColorAnimation {
                             from: syspalActive.highlight
                             to: syspalActive.button
-                            duration: 1000
+                            duration: Qt.styleHints.cursorFlashTime
                         }
                     }
                 }
@@ -186,9 +186,124 @@ ApplicationWindow {
             spacing: 0
             readonly property int spacingPrivate: 6
             Layout.fillWidth: true
-            Layout.maximumHeight: dateTimeLayout.implicitHeight
+            Layout.maximumHeight: startDateGroupbox.implicitHeight
 
             Item { Layout.fillWidth: true }
+
+            Item {
+                implicitHeight: startDateGroupbox.implicitHeight
+                implicitWidth: startDateGroupbox.implicitWidth
+
+                GroupBox {
+                    id: startDateGroupbox
+                    title: qsTr("Start")
+
+                    DateTimeWidget {
+                        id: startDate
+                    }
+                }
+
+                HelpItem {
+                    visible: helpButton.checked
+                    title: qsTr("1")
+                    text: qsTr("Enter interval start")
+                }
+            }
+
+            Item { Layout.preferredWidth: parent.spacingPrivate }
+
+            Item {
+                implicitHeight: endDateGroupbox.implicitHeight
+                implicitWidth: endDateGroupbox.implicitWidth
+
+                GroupBox {
+                    id: endDateGroupbox
+                    title: qsTr("End")
+
+                    DateTimeWidget {
+                        id: endDate
+                    }
+                }
+
+                HelpItem {
+                    visible: helpButton.checked
+                    title: qsTr("2")
+                    text: qsTr("Enter interval end")
+                }
+            }
+
+            Item { Layout.preferredWidth: parent.spacingPrivate }
+
+            Item {
+                Layout.fillHeight: true
+                Layout.maximumWidth: {
+                    var w = 0;
+                    for(var i = 0; i < buttonsLayout.children.length; ++i) {
+                        w = Math.max(w, buttonsLayout.children[i].implicitWidth);
+                    }
+                    return w;
+                }
+                implicitHeight: buttonsLayout.implicitHeight
+                implicitWidth: buttonsLayout.implicitWidth
+
+                ColumnLayout {
+                    id: buttonsLayout
+                    anchors.fill: parent
+
+                    Item { Layout.fillHeight: true }
+
+                    Button {
+                        text: qsTr("--> Add -->")
+                        Layout.fillWidth: true
+
+                        onClicked: {
+                            addTimeClicked(new Date(startDate.date.getFullYear(),
+                                                    startDate.date.getMonth(),
+                                                    startDate.date.getDate(),
+                                                    startDate.hours,
+                                                    startDate.minutes),
+                                           new Date(endDate.date.getFullYear(),
+                                                    endDate.date.getMonth(),
+                                                    endDate.date.getDate(),
+                                                    endDate.hours,
+                                                    endDate.minutes));
+                        }
+                    }
+
+                    DelayButton {
+                        id: removeButton
+                        text: qsTr("--> Remove <--")
+                        enabled: timelineListView.currentIndex >= 0
+                        Layout.fillWidth: true
+
+                        delay: Qt.styleHints.mousePressAndHoldInterval
+                        transition: Transition {
+                            NumberAnimation {
+                                duration: removeButton.delay
+                                properties: "progress"
+                                easing.type: Easing.OutCirc
+                            }
+                        }
+
+                        onActivated: {
+                            removeTimeEntry(timelineListView.currentIndex);
+                        }
+                        onReleased: {
+                            checked = false;
+                        }
+                    }
+
+                    Item { Layout.fillHeight: true }
+                }
+
+                HelpItem {
+                    visible: helpButton.checked
+                    title: qsTr("3")
+                    text: qsTr("Add or remove time")
+                }
+            }
+
+            Item { Layout.preferredWidth: parent.spacingPrivate }
 
             Item {
                 implicitHeight: timelineGroupbox.implicitHeight
@@ -248,125 +363,6 @@ ApplicationWindow {
                     visible: helpButton.checked
                     title: qsTr("4")
                     text: qsTr("List with current time intervals")
-                }
-            }
-
-            Item { Layout.preferredWidth: parent.spacingPrivate }
-
-            Item {
-                Layout.fillHeight: true
-                Layout.maximumWidth: {
-                    var w = 0;
-                    for(var i = 0; i < buttonsLayout.children.length; ++i) {
-                        w = Math.max(w, buttonsLayout.children[i].implicitWidth);
-                    }
-                    return w;
-                }
-                implicitHeight: buttonsLayout.implicitHeight
-                implicitWidth: buttonsLayout.implicitWidth
-
-                ColumnLayout {
-                    id: buttonsLayout
-                    anchors.fill: parent
-
-                    Item { Layout.fillHeight: true }
-
-                    Button {
-                        text: qsTr("<-- Add <--")
-                        Layout.fillWidth: true
-
-                        onClicked: {
-                            addTimeClicked(new Date(startDate.date.getFullYear(),
-                                                    startDate.date.getMonth(),
-                                                    startDate.date.getDate(),
-                                                    startDate.hours,
-                                                    startDate.minutes),
-                                           new Date(endDate.date.getFullYear(),
-                                                    endDate.date.getMonth(),
-                                                    endDate.date.getDate(),
-                                                    endDate.hours,
-                                                    endDate.minutes));
-                        }
-                    }
-
-                    DelayButton {
-                        id: removeButton
-                        text: qsTr("--> Remove <--")
-                        enabled: timelineListView.currentIndex >= 0
-                        Layout.fillWidth: true
-
-                        delay: 1000
-                        transition: Transition {
-                            NumberAnimation {
-                                duration: removeButton.delay
-                                properties: "progress"
-                                easing.type: Easing.OutCirc
-                            }
-                        }
-
-                        onActivated: {
-                            removeTimeEntry(timelineListView.currentIndex);
-                        }
-                        onReleased: {
-                            checked = false;
-                        }
-                    }
-
-                    Item { Layout.fillHeight: true }
-                }
-
-                HelpItem {
-                    visible: helpButton.checked
-                    title: qsTr("3")
-                    text: qsTr("Add or remove time")
-                }
-            }
-
-            Item { Layout.preferredWidth: parent.spacingPrivate }
-
-            RowLayout {
-                id: dateTimeLayout
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-
-                Item {
-                    implicitHeight: startDateGroupbox.implicitHeight
-                    implicitWidth: startDateGroupbox.implicitWidth
-
-                    GroupBox {
-                        id: startDateGroupbox
-                        title: qsTr("Start")
-
-                        DateTimeWidget {
-                            id: startDate
-                        }
-                    }
-
-                    HelpItem {
-                        visible: helpButton.checked
-                        title: qsTr("1")
-                        text: qsTr("Enter interval start")
-                    }
-                }
-
-                Item {
-                    implicitHeight: endDateGroupbox.implicitHeight
-                    implicitWidth: endDateGroupbox.implicitWidth
-
-                    GroupBox {
-                        id: endDateGroupbox
-                        title: qsTr("End")
-
-                        DateTimeWidget {
-                            id: endDate
-                        }
-                    }
-
-                    HelpItem {
-                        visible: helpButton.checked
-                        title: qsTr("2")
-                        text: qsTr("Enter interval end")
-                    }
                 }
             }
 
