@@ -25,7 +25,7 @@ QVariant Settings::get(const Settings::Type type, const QVariant &defaultValue)
     const SettingsData &data = kSettingsTypeMap.value(type);
     if(data.isEmpty())
     {
-        qDebug() << Q_FUNC_INFO << "data unavailable for" << type << data.key << data.defaultValue;
+        qDebug() << "data unavailable for" << type << data.key << data.defaultValue;
         return defaultValue;
     }
     return QSettings().value(data.key, defaultValue.isNull() ? data.defaultValue : defaultValue);
@@ -36,7 +36,7 @@ void Settings::set(const Settings::Type type, const QVariant &value)
     const SettingsData &data = kSettingsTypeMap.value(type);
     if(data.isEmpty())
     {
-        qDebug() << Q_FUNC_INFO << "data unavailable for" << type << data.key << data.defaultValue;
+        qDebug() << "data unavailable for" << type << data.key << data.defaultValue;
         return;
     }
     QSettings().setValue(data.key, value);

@@ -10,9 +10,11 @@ HEADERS += \
     sources/TimeSpan.h \
     sources/Settings.h \
     sources/QmlPixmapProvider.h \
-    sources/Util.h
+    sources/Util.h \
+    sources/Logger.h
 
-SOURCES += sources/main.cpp \
+SOURCES += \
+    sources/main.cpp \
     sources/MainController.cpp \
     sources/MainWindow.cpp \
     sources/TimelineModel.cpp \
@@ -20,7 +22,8 @@ SOURCES += sources/main.cpp \
     sources/TimeSpan.cpp \
     sources/Settings.cpp \
     sources/QmlPixmapProvider.cpp \
-    sources/Util.cpp
+    sources/Util.cpp \
+    sources/Logger.cpp
 
 RESOURCES += resources/qml.qrc
 
@@ -34,7 +37,7 @@ QML_DESIGNER_IMPORT_PATH =
 # any feature of Qt which as been marked deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
-DEFINES += QT_DEPRECATED_WARNINGS
+DEFINES += QT_DEPRECATED_WARNINGS QT_MESSAGELOGCONTEXT
 
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.

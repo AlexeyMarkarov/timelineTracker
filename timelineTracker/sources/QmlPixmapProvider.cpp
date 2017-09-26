@@ -51,7 +51,7 @@ QPixmap QmlPixmapProvider::getStdPixmap(const QString &id, QSize *size, const QS
 
     if(pixmapType == QStyle::SP_CustomBase)
     {
-        qWarning() << Q_FUNC_INFO << "unknown pixmap type" << id << pixmapType;
+        qWarning() << "unknown pixmap type" << id << pixmapType;
     }
 
     // get the pixmap

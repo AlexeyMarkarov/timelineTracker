@@ -4,6 +4,7 @@
 #include "ChartView.h"
 #include "Settings.h"
 #include "Util.h"
+#include "Logger.h"
 
 MainController::MainController(QObject *parent)
     : QObject(parent)
@@ -16,6 +17,8 @@ MainController::~MainController()
 
 bool MainController::init()
 {
+    Logger::init();
+
     qRegisterMetaType<QStyle::PixelMetric>("QStyle::PixelMetric");
     qmlRegisterUncreatableMetaObject(QStyle::staticMetaObject, "Qt.Widgets", 1, 0, "QStyle", "QStyle metaobject only.");
     qmlRegisterSingletonType<Util>("TimelineTracker", 1, 0, "Util", Util::qmlSingletonProvider);
@@ -70,6 +73,8 @@ void MainController::release()
     Settings::set(Settings::Type::WindowPosition, mWnd->getPosition());
     Settings::set(Settings::Type::WindowSize, mWnd->getSize());
     Settings::set(Settings::Type::WindowVisibility, mWnd->getVisibility());
+
+    Logger::release();
 }
 
 void MainController::updateOutput()

@@ -54,7 +54,7 @@ void TimelineModel::addTime(const TimeSpan time)
 {
     if(!time.isValid())
     {
-        qDebug() << Q_FUNC_INFO << "time is invalid:" << time.start << time.end;
+        qDebug() << "time is invalid:" << time.start << time.end;
         return;
     }
 
