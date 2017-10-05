@@ -12,7 +12,8 @@ HEADERS += \
     sources/QmlPixmapProvider.h \
     sources/Util.h \
     sources/Logger.h \
-    sources/Version.h
+    sources/Version.h \
+    sources/BuildInfo.h
 
 SOURCES += \
     sources/main.cpp \
