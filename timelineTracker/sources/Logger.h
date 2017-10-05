@@ -9,6 +9,8 @@ public:
     static void init();
     static void release();
 
+    static QString getLogsDir();
+
 private:
     Logger();
     ~Logger();

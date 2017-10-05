@@ -5,7 +5,7 @@ QFile Logger::sLogFile;
 
 void Logger::init()
 {
-    const QString logDir = QDir::toNativeSeparators(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation));
+    const QString logDir = QDir::toNativeSeparators(getLogsDir());
     if(!QDir(logDir).exists())
     {
         if(!QDir().mkpath(logDir))
@@ -59,4 +59,11 @@ void Logger::messageHandler(QtMsgType type, const QMessageLogContext &context, c
         sLogFile.write(finalMsg.toUtf8());
         sLogFile.flush();
     }
+}
+
+QString Logger::getLogsDir()
+{
+    return sLogFile.isOpen()
+            ? QFileInfo(sLogFile.fileName()).absolutePath()
+            : QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
 }

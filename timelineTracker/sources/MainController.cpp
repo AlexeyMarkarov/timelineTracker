@@ -30,6 +30,7 @@ bool MainController::init()
     connect(mWnd, &MainWindow::addTimeClicked,  mTimeline, QOverload<const QDateTime, const QDateTime>::of(&TimelineModel::addTime));
     connect(mWnd, &MainWindow::removeTimeEntryClicked, mTimeline, &TimelineModel::removeRow);
     connect(mWnd, &MainWindow::clearTimeClicked, mTimeline, &TimelineModel::clear);
+    connect(mWnd, &MainWindow::logsClicked, this, &MainController::onLogsClicked);
     connect(mWnd, &MainWindow::closing, this, &MainController::onWindowClosing);
 
     connect(mTimeline, &TimelineModel::rowsInserted,    this, &MainController::updateOutput);
@@ -242,4 +243,10 @@ QDateTime MainController::roundHour(const QDateTime &dt)
 void MainController::onWindowClosing()
 {
     qApp->exit();
+}
+
+void MainController::onLogsClicked()
+{
+    QDesktopServices::openUrl(QUrl::fromLocalFile(Logger::getLogsDir()));
+
 }

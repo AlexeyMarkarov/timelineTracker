@@ -21,6 +21,7 @@ public:
 private slots:
     void updateOutput();
     void onWindowClosing();
+    void onLogsClicked();
 
 private:
     MainWindow *mWnd;

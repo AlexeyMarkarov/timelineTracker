@@ -35,6 +35,7 @@ signals:
     void addTimeClicked(const QDateTime start, const QDateTime end);
     void removeTimeEntryClicked(const int index);
     void clearTimeClicked();
+    void logsClicked();
     void closing();
 
 private:

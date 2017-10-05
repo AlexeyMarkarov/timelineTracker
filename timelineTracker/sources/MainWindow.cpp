@@ -47,6 +47,8 @@ void MainWindow::connectSignals()
             this, SIGNAL(removeTimeEntryClicked(const int)));
     connect(mWindow, SIGNAL(clearTimeClicked()),
             this, SIGNAL(clearTimeClicked()));
+    connect(mWindow, SIGNAL(logsClicked()),
+            this, SIGNAL(logsClicked()));
     connect(mWindow, SIGNAL(closeRequested()),
             this, SIGNAL(closing()));
 }

@@ -22,6 +22,7 @@ ApplicationWindow {
     signal addTimeClicked(date start, date end)
     signal removeTimeEntryClicked(int index)
     signal clearTimeClicked
+    signal logsClicked
     signal closeRequested
 
     onClosing: {
@@ -38,6 +39,7 @@ ApplicationWindow {
         }
 
         clearButton.activated.connect(clearTimeClicked);
+        logsButton.clicked.connect(logsClicked);
     }
 
     SystemPalette {
@@ -58,7 +60,7 @@ ApplicationWindow {
                 color: helpButton.checked ? syspalActive.alternateBase : "transparent"
             }
             GradientStop {
-                position: (contactLabel.y + contactLabel.paintedHeight) / header.height
+                position: (header.height - headerLayout.anchors.margins - headerLayout.anchors.bottomMargin) / header.height
                 color: helpButton.checked ? syspalActive.alternateBase : "transparent"
             }
             GradientStop {
@@ -68,13 +70,14 @@ ApplicationWindow {
         }
 
         z: mainLayout.z + 1
-        implicitHeight: headerLayout.implicitHeight + headerLayout.anchors.margins * 2
+        implicitHeight: headerLayout.implicitHeight + headerLayout.anchors.margins + headerLayout.anchors.bottomMargin
 
         RowLayout {
             id: headerLayout
             anchors {
                 fill: parent
                 margins: 5
+                bottomMargin: 10
             }
 
             Label {
@@ -109,6 +112,14 @@ ApplicationWindow {
             }
 
             Item { Layout.fillWidth: true }
+
+            Button {
+                id: logsButton
+                text: qsTr("Logs")
+                visible: helpButton.checked
+            }
+
+            Item { Layout.preferredWidth: Util.pixelMetric(QStyle.PM_LargeIconSize) }
 
             RoundButton {
                 id: helpButton
