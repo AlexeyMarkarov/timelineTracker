@@ -45,18 +45,10 @@ void Logger::messageHandler(QtMsgType type, const QMessageLogContext &context, c
     static QMutex mutex;
 
     const QDateTime dt = QDateTime::currentDateTime();
-    const QString finalMsg = QString("[%1-%2-%3 %4:%5:%6.%7 %8 %9 func:%10 line:%11]: %12\n")
-                             .arg(dt.date().year())
-                             .arg(dt.date().month(), 2, 10, QChar('0'))
-                             .arg(dt.date().day(), 2, 10, QChar('0'))
-                             .arg(dt.time().hour(), 2, 10, QChar('0'))
-                             .arg(dt.time().minute(), 2, 10, QChar('0'))
-                             .arg(dt.time().second(), 2, 10, QChar('0'))
-                             .arg(dt.time().msec(), 3, 10, QChar('0'))
-                             .arg(dt.timeZone().displayName(dt, QTimeZone::OffsetName))
+    const QString finalMsg = QStringLiteral("[%1 %2 %3] %4\n")
+                             .arg(dt.toOffsetFromUtc(dt.offsetFromUtc()).toString(Qt::ISODateWithMs))
                              .arg(typeNames.value(type, QStringLiteral("Debug")))
                              .arg(context.function)
-                             .arg(context.line)
                              .arg(msg)
                              ;
 
