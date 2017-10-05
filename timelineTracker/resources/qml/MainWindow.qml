@@ -286,6 +286,7 @@ ApplicationWindow {
                                                     endDate.date.getDate(),
                                                     endDate.hours,
                                                     endDate.minutes));
+                            startDate.forceActiveFocus();
                         }
                     }
 

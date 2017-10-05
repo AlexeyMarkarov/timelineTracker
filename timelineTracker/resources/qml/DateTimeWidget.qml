@@ -12,6 +12,10 @@ Rectangle {
     property alias hours: hoursControl.value
     property alias minutes: minutesControl.value
 
+    onFocusChanged: {
+        hoursControl.forceActiveFocus();
+    }
+
     ColumnLayout {
         id: mainLayout
         anchors.fill: parent
