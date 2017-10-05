@@ -113,6 +113,11 @@ ApplicationWindow {
 
             Item { Layout.fillWidth: true }
 
+            Label {
+                text: qsTr("Version: ") + Qt.application.version
+                visible: helpButton.checked
+            }
+
             Button {
                 id: logsButton
                 text: qsTr("Logs")

@@ -248,5 +248,4 @@ void MainController::onWindowClosing()
 void MainController::onLogsClicked()
 {
     QDesktopServices::openUrl(QUrl::fromLocalFile(Logger::getLogsDir()));
-
 }

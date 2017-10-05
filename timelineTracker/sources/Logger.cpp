@@ -36,11 +36,11 @@ void Logger::release()
 void Logger::messageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     static const QMap<QtMsgType, QString> typeNames = {
-        { QtDebugMsg,       "Debug" },
-        { QtWarningMsg,     "Warning" },
-        { QtCriticalMsg,    "Critical" },
-        { QtFatalMsg,       "Fatal" },
-        { QtInfoMsg,        "Info" }
+        { QtDebugMsg,       QStringLiteral("Debug") },
+        { QtWarningMsg,     QStringLiteral("Warning") },
+        { QtCriticalMsg,    QStringLiteral("Critical") },
+        { QtFatalMsg,       QStringLiteral("Fatal") },
+        { QtInfoMsg,        QStringLiteral("Info") }
     };
     static QMutex mutex;
 

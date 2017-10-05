@@ -11,7 +11,8 @@ HEADERS += \
     sources/Settings.h \
     sources/QmlPixmapProvider.h \
     sources/Util.h \
-    sources/Logger.h
+    sources/Logger.h \
+    sources/Version.h
 
 SOURCES += \
     sources/main.cpp \
@@ -48,6 +49,15 @@ DEFINES += QT_DEPRECATED_WARNINGS QT_MESSAGELOGCONTEXT
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+################################################################################
+# Pre-build
+################################################################################
+versionTarget.target = sources/BuildInfo.h
+versionTarget.depends = FORCE
+versionTarget.commands = python $${PWD}/prebuild.py $${PWD} $${PWD}/sources/BuildInfo.h
+PRE_TARGETDEPS += sources/BuildInfo.h
+QMAKE_EXTRA_TARGETS += versionTarget
 
 ################################################################################
 # Deploy
