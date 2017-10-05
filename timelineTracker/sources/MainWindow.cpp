@@ -43,8 +43,10 @@ void MainWindow::connectSignals()
 {
     connect(mWindow, SIGNAL(addTimeClicked(const QDateTime, const QDateTime)),
             this, SIGNAL(addTimeClicked(const QDateTime, const QDateTime)));
-    connect(mWindow, SIGNAL(removeTimeEntry(const int)),
-            this, SIGNAL(removeTimeEntry(const int)));
+    connect(mWindow, SIGNAL(removeTimeEntryClicked(const int)),
+            this, SIGNAL(removeTimeEntryClicked(const int)));
+    connect(mWindow, SIGNAL(clearTimeClicked()),
+            this, SIGNAL(clearTimeClicked()));
     connect(mWindow, SIGNAL(closeRequested()),
             this, SIGNAL(closing()));
 }

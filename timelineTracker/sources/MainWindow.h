@@ -33,7 +33,8 @@ public:
 
 signals:
     void addTimeClicked(const QDateTime start, const QDateTime end);
-    void removeTimeEntry(const int index);
+    void removeTimeEntryClicked(const int index);
+    void clearTimeClicked();
     void closing();
 
 private:

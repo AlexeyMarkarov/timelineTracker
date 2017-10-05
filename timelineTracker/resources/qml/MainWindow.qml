@@ -20,7 +20,8 @@ ApplicationWindow {
     property alias flashHelpIndicator: helpButton.flashBackground
 
     signal addTimeClicked(date start, date end)
-    signal removeTimeEntry(int index)
+    signal removeTimeEntryClicked(int index)
+    signal clearTimeClicked
     signal closeRequested
 
     onClosing: {
@@ -35,6 +36,8 @@ ApplicationWindow {
         if(minimumHeight >= 680) {
             console.log("Exceeded recommended minimum height: " + minimumHeight);
         }
+
+        clearButton.activated.connect(clearTimeClicked);
     }
 
     SystemPalette {
@@ -272,10 +275,8 @@ ApplicationWindow {
 
                     DelayButton {
                         id: removeButton
-                        text: qsTr("--> Remove <--")
+                        text: qsTr("Remove")
                         enabled: timelineListView.currentIndex >= 0
-                        Layout.fillWidth: true
-
                         delay: Qt.styleHints.mousePressAndHoldInterval
                         transition: Transition {
                             NumberAnimation {
@@ -284,10 +285,30 @@ ApplicationWindow {
                                 easing.type: Easing.OutCirc
                             }
                         }
+                        Layout.fillWidth: true
 
                         onActivated: {
-                            removeTimeEntry(timelineListView.currentIndex);
+                            removeTimeEntryClicked(timelineListView.currentIndex);
                         }
+                        onReleased: {
+                            checked = false;
+                        }
+                    }
+
+                    DelayButton {
+                        id: clearButton
+                        text: qsTr("Clear")
+                        enabled: timelineListView.count > 0
+                        delay: Qt.styleHints.mousePressAndHoldInterval
+                        transition: Transition {
+                            NumberAnimation {
+                                duration: clearButton.delay
+                                properties: "progress"
+                                easing.type: Easing.OutCirc
+                            }
+                        }
+                        Layout.fillWidth: true
+
                         onReleased: {
                             checked = false;
                         }

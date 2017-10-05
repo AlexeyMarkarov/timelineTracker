@@ -90,3 +90,8 @@ QString TimelineModel::getStdText()
     const QDateTime dt = QDateTime::currentDateTime();
     return dt.toString() + QStringLiteral(" - ") + dt.toString();
 }
+
+void TimelineModel::clear()
+{
+    removeRows(0, rowCount());
+}

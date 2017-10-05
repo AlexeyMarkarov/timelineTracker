@@ -28,7 +28,8 @@ bool MainController::init()
     mWnd->setTimeModel(mTimeline);
 
     connect(mWnd, &MainWindow::addTimeClicked,  mTimeline, QOverload<const QDateTime, const QDateTime>::of(&TimelineModel::addTime));
-    connect(mWnd, &MainWindow::removeTimeEntry, mTimeline, &TimelineModel::removeRow);
+    connect(mWnd, &MainWindow::removeTimeEntryClicked, mTimeline, &TimelineModel::removeRow);
+    connect(mWnd, &MainWindow::clearTimeClicked, mTimeline, &TimelineModel::clear);
     connect(mWnd, &MainWindow::closing, this, &MainController::onWindowClosing);
 
     connect(mTimeline, &TimelineModel::rowsInserted,    this, &MainController::updateOutput);

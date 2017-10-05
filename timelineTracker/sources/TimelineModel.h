@@ -35,6 +35,7 @@ public slots:
     void addTime(const TimeSpan time);
     void addTime(const QDateTime start, const QDateTime end);
     void removeRow(const int row);
+    void clear();
 
 private:
     QVector<TimeSpan> mTimeline;
