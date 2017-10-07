@@ -51,6 +51,15 @@ ApplicationWindow {
         colorGroup: SystemPalette.Active
     }
 
+    Item {
+        anchors.fill: parent
+        Keys.onEscapePressed: {
+            if(helpButton.checked) {
+                helpButton.checked = false;
+                event.accepted = true;
+            }
+        }
+
     Rectangle {
         id: header
         anchors {
@@ -458,4 +467,5 @@ ApplicationWindow {
             helpButton.checked = false
         }
     }
+}
 }
