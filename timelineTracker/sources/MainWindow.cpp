@@ -49,6 +49,8 @@ void MainWindow::connectSignals()
             this, SIGNAL(clearTimeClicked()));
     connect(mWindow, SIGNAL(logsClicked()),
             this, SIGNAL(logsClicked()));
+    connect(mWindow, SIGNAL(aboutQtClicked()),
+            this, SIGNAL(aboutQtClicked()));
     connect(mWindow, SIGNAL(closeRequested()),
             this, SIGNAL(closing()));
 }

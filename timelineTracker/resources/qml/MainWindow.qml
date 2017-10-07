@@ -23,6 +23,7 @@ ApplicationWindow {
     signal removeTimeEntryClicked(int index)
     signal clearTimeClicked
     signal logsClicked
+    signal aboutQtClicked
     signal closeRequested
 
     onClosing: {
@@ -40,6 +41,9 @@ ApplicationWindow {
 
         clearButton.activated.connect(clearTimeClicked);
         logsButton.clicked.connect(logsClicked);
+        aboutQtButton.clicked.connect(aboutQtClicked);
+
+        startDate.forceActiveFocus();
     }
 
     SystemPalette {
@@ -121,6 +125,12 @@ ApplicationWindow {
             Button {
                 id: logsButton
                 text: qsTr("Logs")
+                visible: helpButton.checked
+            }
+
+            Button {
+                id: aboutQtButton
+                text: qsTr("About Qt")
                 visible: helpButton.checked
             }
 
@@ -442,6 +452,7 @@ ApplicationWindow {
             bottom: parent.bottom
         }
         enabled: helpButton.checked
+        acceptedButtons: Qt.AllButtons
 
         onClicked: {
             helpButton.checked = false

@@ -29,7 +29,11 @@ Rectangle {
             color: syspalActive.highlightedText
             horizontalAlignment: Label.AlignHCenter
             verticalAlignment: Label.AlignVCenter
-            font.pointSize: 20
+            font {
+                pointSize: 16
+                bold: true
+            }
+            style: Text.Outline
             Layout.fillWidth: true
         }
 
@@ -38,8 +42,12 @@ Rectangle {
             color: syspalActive.highlightedText
             horizontalAlignment: Label.AlignHCenter
             verticalAlignment: Label.AlignVCenter
-            font.pointSize: 16
+            font {
+                pointSize: 12
+                bold: true
+            }
             wrapMode: Text.WordWrap
+            style: Text.Outline
             Layout.fillHeight: true
             Layout.fillWidth: true
         }

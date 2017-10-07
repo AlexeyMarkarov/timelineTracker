@@ -36,6 +36,7 @@ signals:
     void removeTimeEntryClicked(const int index);
     void clearTimeClicked();
     void logsClicked();
+    void aboutQtClicked();
     void closing();
 
 private:

@@ -31,6 +31,7 @@ bool MainController::init()
     connect(mWnd, &MainWindow::removeTimeEntryClicked, mTimeline, &TimelineModel::removeRow);
     connect(mWnd, &MainWindow::clearTimeClicked, mTimeline, &TimelineModel::clear);
     connect(mWnd, &MainWindow::logsClicked, this, &MainController::onLogsClicked);
+    connect(mWnd, &MainWindow::aboutQtClicked, qApp, &QApplication::aboutQt);
     connect(mWnd, &MainWindow::closing, this, &MainController::onWindowClosing);
 
     connect(mTimeline, &TimelineModel::rowsInserted,    this, &MainController::updateOutput);
