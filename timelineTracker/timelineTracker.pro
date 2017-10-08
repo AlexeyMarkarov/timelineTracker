@@ -2,6 +2,14 @@ QT += gui qml quick widgets charts
 
 CONFIG += c++11 warn_on
 
+CONFIG( debug, debug|release ) {
+    BUILD_SUBDIR = debug
+} else {
+    BUILD_SUBDIR = release
+}
+
+DESTDIR = $${PWD}/bin/$${BUILD_SUBDIR}
+
 HEADERS += \
     sources/MainController.h \
     sources/MainWindow.h \
@@ -64,12 +72,6 @@ QMAKE_EXTRA_TARGETS += versionTarget
 # Deploy
 ################################################################################
 
-CONFIG( debug, debug|release ) {
-    BUILD_SUBDIR = debug
-} else {
-    BUILD_SUBDIR = release
-}
-
 isEmpty(TARGET_EXT) {
     win32 {
         TARGET_CUSTOM_EXT = .exe
@@ -88,7 +90,7 @@ macx {
     DEPLOY_COMMAND = macdeployqt
 }
 
-DEPLOY_TARGET = $$shell_quote($$shell_path($${OUT_PWD}/$${BUILD_SUBDIR}/$${TARGET}$${TARGET_CUSTOM_EXT}))
+DEPLOY_TARGET = $$shell_quote($$shell_path($${DESTDIR}/$${TARGET}$${TARGET_CUSTOM_EXT}))
 
 QMAKE_POST_LINK = $${DEPLOY_COMMAND} \
     --qmldir $$shell_quote($$shell_path($${PWD}/resources/qml)) \
