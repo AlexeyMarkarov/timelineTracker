@@ -19,6 +19,7 @@ public:
     Q_INVOKABLE static int pixelMetric(const QStyle::PixelMetric metric);
 
     Q_INVOKABLE static void copyToClipboard(const QString &string);
+    static QString getUserName();
 
 private:
 };

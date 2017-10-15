@@ -1,5 +1,6 @@
 #include "Analytics.h"
 #include "../Settings.h"
+#include "../Util.h"
 
 static const QString kAnalyticsVersion("1");
 static const QString kTrackingID("UA-XXXX-Y");
@@ -25,7 +26,12 @@ Analytics::~Analytics()
 
 bool Analytics::init()
 {
-    mUserId = QUuid::createUuid().toString();
+    const QString userInfo = QSysInfo::currentCpuArchitecture()
+                             + QSysInfo::machineHostName()
+                             + QSysInfo::productType()
+                             + QSysInfo::productVersion()
+                             + Util::getUserName();
+    mUserId = QCryptographicHash::hash(userInfo.toUtf8(), QCryptographicHash::Sha512);
     return true;
 }
 
