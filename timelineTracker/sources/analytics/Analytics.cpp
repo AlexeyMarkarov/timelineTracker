@@ -56,15 +56,24 @@ void Analytics::send(const AbstractAnalyticsItem &item)
     payload.addQueryItem("z", QString::number(mRand(mRandGen)));
     const QByteArray payloadData = payload.query().toLatin1();
 
-    QNetworkReply *reply = mNet.post(QNetworkRequest(QUrl(kGaEndpointCollect)), payloadData);
+    QNetworkRequest request(kGaEndpointCollect);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    QNetworkReply *reply = mNet.post(request, payloadData);
     connect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error), [reply](const QNetworkReply::NetworkError code)
     {
         qWarning() << "analytics error" << code << reply->errorString();
     });
     connect(reply, &QNetworkReply::finished, [reply]()
     {
-        const QByteArray data = reply->readAll();
-        qDebug() << "analytics respond:" << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) << data;
+        if(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toString().startsWith('2'))
+        {
+            // Google Analytics returns 2xx code if request was received.
+        }
+        else
+        {
+            const QByteArray data = reply->readAll();
+            qWarning() << "analytics error:" << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) << data;
+        }
         reply->deleteLater();
     });
 
