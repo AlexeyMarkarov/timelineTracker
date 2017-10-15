@@ -84,4 +84,4 @@ isEmpty(TARGET_EXT) {
 } else {
     TARGET_CUSTOM_EXT = $${TARGET_EXT}
 }
-QMAKE_POST_LINK = python $${PWD}/postbuild.py $${DESTDIR} $${TARGET}$${TARGET_CUSTOM_EXT} $${PWD}/resources/qml
+QMAKE_POST_LINK = python $${PWD}/postbuild.py $${PWD} $${DESTDIR} $${TARGET}$${TARGET_CUSTOM_EXT} $${PWD}/resources/qml
