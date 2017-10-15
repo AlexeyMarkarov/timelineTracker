@@ -21,7 +21,10 @@ HEADERS += \
     sources/Util.h \
     sources/Logger.h \
     sources/Version.h \
-    sources/BuildInfo.h
+    sources/BuildInfo.h \
+    sources/analytics/Analytics.h \
+    sources/analytics/AbstractAnalyticsItem.h \
+    sources/analytics/ScreenResolutionAnalyticsItem.h
 
 SOURCES += \
     sources/main.cpp \
@@ -33,7 +36,10 @@ SOURCES += \
     sources/Settings.cpp \
     sources/QmlPixmapProvider.cpp \
     sources/Util.cpp \
-    sources/Logger.cpp
+    sources/Logger.cpp \
+    sources/analytics/Analytics.cpp \
+    sources/analytics/AbstractAnalyticsItem.cpp \
+    sources/analytics/ScreenResolutionAnalyticsItem.cpp
 
 RESOURCES += resources/qml.qrc
 

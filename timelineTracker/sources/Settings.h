@@ -13,7 +13,8 @@ public:
         FirstRun,
         WindowVisibility,
         WindowPosition,
-        WindowSize
+        WindowSize,
+        AnalyticsEnabled
     };
     Q_ENUM(Type)
 
