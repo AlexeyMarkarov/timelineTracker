@@ -25,7 +25,8 @@ HEADERS += \
     sources/analytics/Analytics.h \
     sources/analytics/AbstractAnalyticsItem.h \
     sources/analytics/ScreenResolutionAnalyticsItem.h \
-    sources/analytics/UserLanguageAnalyticsItem.h
+    sources/analytics/UserLanguageAnalyticsItem.h \
+    sources/analytics/AppInfoAnalyticsItem.h
 
 SOURCES += \
     sources/main.cpp \
@@ -41,7 +42,8 @@ SOURCES += \
     sources/analytics/Analytics.cpp \
     sources/analytics/AbstractAnalyticsItem.cpp \
     sources/analytics/ScreenResolutionAnalyticsItem.cpp \
-    sources/analytics/UserLanguageAnalyticsItem.cpp
+    sources/analytics/UserLanguageAnalyticsItem.cpp \
+    sources/analytics/AppInfoAnalyticsItem.cpp
 
 RESOURCES += resources/qml.qrc
 
