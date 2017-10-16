@@ -3,7 +3,7 @@
 #include "../Util.h"
 
 static const QString kAnalyticsVersion("1");
-static const QString kTrackingID("UA-XXXX-Y");
+static const QString kTrackingID("UA-108074830-1");
 static const QString kGaEndpointCollect("https://www.google-analytics.com/collect");
 static const QString kGaEndpointBatch("https://www.google-analytics.com/batch");
 
