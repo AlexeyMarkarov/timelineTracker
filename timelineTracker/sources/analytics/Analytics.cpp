@@ -55,6 +55,7 @@ void Analytics::send(const AbstractAnalyticsItem &item)
     payload.addQueryItem("v", kAnalyticsVersion);
     payload.addQueryItem("tid", kTrackingID);
     payload.addQueryItem("uid", mUserId);
+    payload.addQueryItem("aip", "1");
     for(auto payloadItem : itemPayload)
     {
         payload.addQueryItem(payloadItem.first, payloadItem.second);
