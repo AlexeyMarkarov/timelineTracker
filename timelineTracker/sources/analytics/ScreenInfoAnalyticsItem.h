@@ -4,11 +4,11 @@
 #include <QtGui>
 #include "AbstractAnalyticsItem.h"
 
-class ScreenResolutionAnalyticsItem : public AbstractAnalyticsItem
+class ScreenInfoAnalyticsItem : public AbstractAnalyticsItem
 {
 public:
-    ScreenResolutionAnalyticsItem();
-    ~ScreenResolutionAnalyticsItem();
+    ScreenInfoAnalyticsItem();
+    ~ScreenInfoAnalyticsItem();
 
     // AbstractAnalyticsItem interface
     virtual QVector<QPair<QString, QString>> createPayload() const override;

@@ -6,7 +6,7 @@
 #include "Util.h"
 #include "Logger.h"
 #include "analytics/Analytics.h"
-#include "analytics/ScreenResolutionAnalyticsItem.h"
+#include "analytics/ScreenInfoAnalyticsItem.h"
 #include "analytics/UserLanguageAnalyticsItem.h"
 #include "analytics/AppInfoAnalyticsItem.h"
 
@@ -24,7 +24,7 @@ bool MainController::init()
     Logger::init();
     Analytics::inst().init();
 
-    Analytics::inst().send({ AbstractAnalyticsItemPtr(new ScreenResolutionAnalyticsItem),
+    Analytics::inst().send({ AbstractAnalyticsItemPtr(new ScreenInfoAnalyticsItem),
                              AbstractAnalyticsItemPtr(new UserLanguageAnalyticsItem),
                              AbstractAnalyticsItemPtr(new AppInfoAnalyticsItem),
                            });

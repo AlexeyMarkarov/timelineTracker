@@ -1,14 +1,14 @@
-#include "ScreenResolutionAnalyticsItem.h"
+#include "ScreenInfoAnalyticsItem.h"
 
-ScreenResolutionAnalyticsItem::ScreenResolutionAnalyticsItem()
+ScreenInfoAnalyticsItem::ScreenInfoAnalyticsItem()
 {
 }
 
-ScreenResolutionAnalyticsItem::~ScreenResolutionAnalyticsItem()
+ScreenInfoAnalyticsItem::~ScreenInfoAnalyticsItem()
 {
 }
 
-QVector<QPair<QString, QString>> ScreenResolutionAnalyticsItem::createPayload() const
+QVector<QPair<QString, QString>> ScreenInfoAnalyticsItem::createPayload() const
 {
     QVector<QPair<QString, QString>> payload;
     const QSize screenSize = qApp->primaryScreen()->size();
