@@ -23,8 +23,8 @@ bool MainController::init()
     Logger::init();
     Analytics::inst().init();
 
-    Analytics::inst().send(ScreenResolutionAnalyticsItem());
-    Analytics::inst().send(UserLanguageAnalyticsItem());
+    Analytics::inst().send({ AbstractAnalyticsItemPtr(new ScreenResolutionAnalyticsItem),
+                             AbstractAnalyticsItemPtr(new UserLanguageAnalyticsItem) });
 
     qRegisterMetaType<QStyle::PixelMetric>("QStyle::PixelMetric");
     qmlRegisterUncreatableMetaObject(QStyle::staticMetaObject, "Qt.Widgets", 1, 0, "QStyle", "QStyle metaobject only.");

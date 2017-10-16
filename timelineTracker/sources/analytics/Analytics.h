@@ -22,10 +22,13 @@ public:
     void release();
 
     // Send analytics data.
-    void send(const AbstractAnalyticsItem &item);
+    void send(const AbstractAnalyticsItemPtr item);
+    void send(const QVector<AbstractAnalyticsItemPtr> items);
 
 private:
     Analytics(QObject *parent = nullptr);
+    QByteArrayList createPayloads(const QVector<AbstractAnalyticsItemPtr> items);
+    void send(const QByteArrayList payloads);
 
     QNetworkAccessManager mNet;
     QString mUserId;

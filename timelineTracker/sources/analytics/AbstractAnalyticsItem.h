@@ -15,4 +15,6 @@ public:
     virtual QVector<QPair<QString, QString>> createPayload() const = 0;
 };
 
+typedef QSharedPointer<AbstractAnalyticsItem> AbstractAnalyticsItemPtr;
+
 #endif // ABSTRACTANALYTICSITEM_H

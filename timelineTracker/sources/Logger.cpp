@@ -45,7 +45,7 @@ void Logger::messageHandler(QtMsgType type, const QMessageLogContext &context, c
     static QMutex mutex;
 
     const QDateTime dt = QDateTime::currentDateTime();
-    const QString finalMsg = QStringLiteral("[%1 %2 %3] %4\n")
+    const QString finalMsg = QStringLiteral("[%1 %2 %3] %4\r\n")
                              .arg(dt.toOffsetFromUtc(dt.offsetFromUtc()).toString(Qt::ISODateWithMs))
                              .arg(typeNames.value(type, QStringLiteral("Debug")))
                              .arg(context.function)
