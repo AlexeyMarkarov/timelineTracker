@@ -12,6 +12,12 @@ class Analytics : public QObject
     Q_OBJECT
 
 public:
+    enum class Type
+    {
+        StartupEvent
+    };
+    Q_ENUM(Type)
+
     // Global instance.
     static Analytics &inst();
 
@@ -24,10 +30,13 @@ public:
     // Send analytics data.
     void send(const AbstractAnalyticsItemPtr item);
     void send(const QVector<AbstractAnalyticsItemPtr> items);
+    void send(const Type type);
+    void send(const QVector<Type> types);
 
 private:
     Analytics(QObject *parent = nullptr);
     QByteArrayList createPayloads(const QVector<AbstractAnalyticsItemPtr> items);
+    QByteArrayList createPayloads(const QVector<Type> types);
     void send(const QByteArrayList payloads);
 
     QNetworkAccessManager mNet;

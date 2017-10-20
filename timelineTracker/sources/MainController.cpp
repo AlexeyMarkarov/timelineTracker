@@ -24,10 +24,7 @@ bool MainController::init()
     Logger::init();
     Analytics::inst().init();
 
-    Analytics::inst().send({ AbstractAnalyticsItemPtr(new ScreenInfoAnalyticsItem),
-                             AbstractAnalyticsItemPtr(new UserLanguageAnalyticsItem),
-                             AbstractAnalyticsItemPtr(new AppInfoAnalyticsItem),
-                           });
+    Analytics::inst().send(Analytics::Type::StartupEvent);
 
     qRegisterMetaType<QStyle::PixelMetric>("QStyle::PixelMetric");
     qmlRegisterUncreatableMetaObject(QStyle::staticMetaObject, "Qt.Widgets", 1, 0, "QStyle", "QStyle metaobject only.");

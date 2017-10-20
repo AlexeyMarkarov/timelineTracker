@@ -59,6 +59,26 @@ void Analytics::send(const QVector<AbstractAnalyticsItemPtr> items)
     send(payloads);
 }
 
+void Analytics::send(const Type type)
+{
+    send(QVector<Type>() << type);
+}
+
+void Analytics::send(const QVector<Type> types)
+{
+    if(types.isEmpty())
+        return;
+
+    const QByteArrayList payloads = createPayloads(types);
+    if(payloads.isEmpty())
+    {
+        qWarning() << "items produced empty payloads";
+        return;
+    }
+
+    send(payloads);
+}
+
 QByteArrayList Analytics::createPayloads(const QVector<AbstractAnalyticsItemPtr> items)
 {
     QByteArrayList payloads;
@@ -87,6 +107,52 @@ QByteArrayList Analytics::createPayloads(const QVector<AbstractAnalyticsItemPtr>
         const QByteArray payloadData = payload.query().toLatin1();
 
         payloads.append(payloadData);
+    }
+    return payloads;
+}
+
+QByteArrayList Analytics::createPayloads(const QVector<Type> types)
+{
+    QByteArrayList payloads;
+    for(const Type type : types)
+    {
+        QUrlQuery payload;
+        payload.addQueryItem("v", kAnalyticsVersion);
+        payload.addQueryItem("tid", kTrackingID);
+        payload.addQueryItem("uid", mUserId);
+        payload.addQueryItem("aip", "1");
+
+        bool isTypeValid = true;
+        switch(type)
+        {
+        case Type::StartupEvent:
+        {
+            payload.addQueryItem("t", "event");
+            payload.addQueryItem("ni", "1");
+            payload.addQueryItem("ec", "App");
+            payload.addQueryItem("ea", "Startup");
+            payload.addQueryItem("el", "App Startup");
+            payload.addQueryItem("an", qApp->applicationName());
+            payload.addQueryItem("av", qApp->applicationVersion());
+            const QSize screenSize = qApp->primaryScreen()->size();
+            payload.addQueryItem("sr", QStringLiteral("%1x%2").arg(screenSize.width()).arg(screenSize.height()));
+            payload.addQueryItem("sd", QString::number(qApp->primaryScreen()->depth()));
+            payload.addQueryItem("ul", QLocale::languageToString(QLocale::system().language()));
+            break;
+        }
+        default:
+        {
+            qCritical() << "unknown analytics type:" << type;
+            isTypeValid = false;
+            break;
+        }
+        }
+
+        if(!isTypeValid)
+            continue;
+
+        payload.addQueryItem("z", QString::number(mRand(mRandGen)));
+        payloads.append(payload.query().toLatin1());
     }
     return payloads;
 }
