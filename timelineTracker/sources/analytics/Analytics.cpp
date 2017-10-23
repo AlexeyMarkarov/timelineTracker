@@ -2,10 +2,22 @@
 #include "../Settings.h"
 #include "../Util.h"
 
+//#define DEBUG_ANALYTICS
+
 static const QString kAnalyticsVersion("1");
 static const QString kTrackingID("UA-108074830-1");
-static const QString kGaEndpointCollect("https://www.google-analytics.com/collect");
-static const QString kGaEndpointBatch("https://www.google-analytics.com/batch");
+static const QString kGaEndpointCollect
+#ifdef DEBUG_ANALYTICS
+("https://www.google-analytics.com/debug/collect");
+#else
+("https://www.google-analytics.com/collect");
+#endif
+static const QString kGaEndpointBatch
+#ifdef DEBUG_ANALYTICS
+("https://www.google-analytics.com/debug/batch");
+#else
+("https://www.google-analytics.com/batch");
+#endif
 
 Analytics &Analytics::inst()
 {
@@ -182,6 +194,9 @@ void Analytics::send(const QByteArrayList payloads)
         connect(reply, &QNetworkReply::finished, [reply]()
         {
             const QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+#ifdef DEBUG_ANALYTICS
+            qDebug() << "analytics debug reply:" << statusCode << reply->readAll();
+#else
             if(statusCode.toString().startsWith('2'))
             {
                 // Google Analytics returns 2xx code if request was received.
@@ -191,7 +206,9 @@ void Analytics::send(const QByteArrayList payloads)
                 const QByteArray data = reply->readAll();
                 qWarning() << "analytics error:" << statusCode << data;
             }
+#endif
             reply->deleteLater();
         });
+
     }
 }
