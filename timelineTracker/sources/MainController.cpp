@@ -81,11 +81,14 @@ bool MainController::init()
 
 void MainController::release()
 {
+    delete mWnd;
+
     Settings::set(Settings::Type::FirstRun, false);
     Settings::set(Settings::Type::WindowPosition, mWnd->getPosition());
     Settings::set(Settings::Type::WindowSize, mWnd->getSize());
     Settings::set(Settings::Type::WindowVisibility, mWnd->getVisibility());
 
+    Analytics::inst().send(Analytics::Type::ShutdownEvent);
     Analytics::inst().release();
 
     Logger::release();
@@ -254,7 +257,6 @@ QDateTime MainController::roundHour(const QDateTime &dt)
 
 void MainController::onWindowClosing()
 {
-    Analytics::inst().send(Analytics::Type::ShutdownEvent);
     qApp->exit();
 }
 

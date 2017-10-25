@@ -36,6 +36,10 @@ public:
     void send(const Type type);
     void send(const QVector<Type> types);
 
+private slots:
+    void onNetworkReplyError(const QNetworkReply::NetworkError error);
+    void onNetworkReplyFinished();
+
 private:
     Analytics(QObject *parent = nullptr);
     QByteArrayList createPayloads(const QVector<Type> types);
@@ -44,6 +48,7 @@ private:
     QNetworkAccessManager mNet;
     std::default_random_engine mRandGen;
     std::uniform_int_distribution<uint> mRand;
+    QList<QNetworkReply*> mReplies;
 };
 
 #endif // ANALYTICS_H

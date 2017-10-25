@@ -43,6 +43,12 @@ bool Analytics::init()
 
 void Analytics::release()
 {
+    // Need to use separate event loop because this method is called when main event loop is not running.
+    QEventLoop evLoop;
+    while(!mReplies.isEmpty())
+    {
+        evLoop.processEvents(QEventLoop::AllEvents, 1000);
+    }
 }
 
 void Analytics::send(const Type type)
@@ -152,27 +158,41 @@ void Analytics::send(const QByteArrayList payloads)
         QNetworkRequest request(payloadChunk.count() == 1 ? kGaEndpointCollect : kGaEndpointBatch);
         request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
         QNetworkReply *reply = mNet.post(request, payloadChunk.join('\n'));
-        connect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error), [reply](const QNetworkReply::NetworkError code)
-        {
-            qWarning() << "analytics error" << code << reply->errorString();
-        });
-        connect(reply, &QNetworkReply::finished, [reply]()
-        {
-            const QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
-#ifdef DEBUG_ANALYTICS
-            qDebug() << "analytics debug reply:" << statusCode << reply->readAll();
-#else
-            if(statusCode.toString().startsWith('2'))
-            {
-                // Google Analytics returns 2xx code if request was received.
-            }
-            else
-            {
-                const QByteArray data = reply->readAll();
-                qWarning() << "analytics error:" << statusCode << data;
-            }
-#endif
-            reply->deleteLater();
-        });
+        mReplies.append(reply);
+        connect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error), this, &Analytics::onNetworkReplyError);
+        connect(reply, &QNetworkReply::finished, this, &Analytics::onNetworkReplyFinished);
     }
+}
+
+void Analytics::onNetworkReplyError(const QNetworkReply::NetworkError error)
+{
+    QNetworkReply *reply = qobject_cast<QNetworkReply*>(sender());
+    if(!reply)
+        return;
+
+    qWarning() << "analytics error" << error << reply->errorString();
+}
+
+void Analytics::onNetworkReplyFinished()
+{
+    QNetworkReply *reply = qobject_cast<QNetworkReply*>(sender());
+    if(!reply)
+        return;
+
+    const QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+#ifdef DEBUG_ANALYTICS
+    qDebug() << "analytics debug reply:" << statusCode << reply->readAll();
+#else
+    if(statusCode.toString().startsWith('2'))
+    {
+        // Google Analytics returns 2xx code if request was received.
+    }
+    else
+    {
+        const QByteArray data = reply->readAll();
+        qWarning() << "analytics error:" << statusCode << data;
+    }
+#endif
+    reply->deleteLater();
+    mReplies.removeOne(reply);
 }
