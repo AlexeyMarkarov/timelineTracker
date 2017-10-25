@@ -72,6 +72,8 @@ bool MainController::init()
         mWnd->setSize(prevWindowRect.size().expandedTo(mWnd->getMinimumSize()));
         mWnd->setVisibility(visibility);
         mWnd->setFlashHelpIndicator(Settings::get(Settings::Type::FirstRun).toBool());
+
+        Analytics::inst().send(Analytics::Type::MainWindowView);
     }
 
     return mWnd->isCreated();
@@ -83,6 +85,8 @@ void MainController::release()
     Settings::set(Settings::Type::WindowPosition, mWnd->getPosition());
     Settings::set(Settings::Type::WindowSize, mWnd->getSize());
     Settings::set(Settings::Type::WindowVisibility, mWnd->getVisibility());
+
+    Analytics::inst().release();
 
     Logger::release();
 }
@@ -250,6 +254,7 @@ QDateTime MainController::roundHour(const QDateTime &dt)
 
 void MainController::onWindowClosing()
 {
+    Analytics::inst().send(Analytics::Type::ShutdownEvent);
     qApp->exit();
 }
 

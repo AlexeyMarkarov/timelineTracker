@@ -14,7 +14,8 @@ public:
         WindowVisibility,
         WindowPosition,
         WindowSize,
-        AnalyticsEnabled
+        AnalyticsEnabled,
+        AnalyticsClientId
     };
     Q_ENUM(Type)
 

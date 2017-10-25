@@ -14,7 +14,12 @@ class Analytics : public QObject
 public:
     enum class Type
     {
-        StartupEvent
+        // Screenviews
+        MainWindowView,
+
+        // Events
+        StartupEvent,
+        ShutdownEvent
     };
     Q_ENUM(Type)
 
@@ -28,19 +33,15 @@ public:
     void release();
 
     // Send analytics data.
-    void send(const AbstractAnalyticsItemPtr item);
-    void send(const QVector<AbstractAnalyticsItemPtr> items);
     void send(const Type type);
     void send(const QVector<Type> types);
 
 private:
     Analytics(QObject *parent = nullptr);
-    QByteArrayList createPayloads(const QVector<AbstractAnalyticsItemPtr> items);
     QByteArrayList createPayloads(const QVector<Type> types);
     void send(const QByteArrayList payloads);
 
     QNetworkAccessManager mNet;
-    QString mUserId;
     std::default_random_engine mRandGen;
     std::uniform_int_distribution<uint> mRand;
 };

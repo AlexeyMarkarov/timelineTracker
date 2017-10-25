@@ -18,7 +18,8 @@ static const QMap<Settings::Type, SettingsData> kSettingsTypeMap = {
     { Settings::Type::WindowVisibility, { "WindowVisibility",   QWindow::AutomaticVisibility } },
     { Settings::Type::WindowPosition,   { "WindowPosition",     QPoint(0, 0) } },
     { Settings::Type::WindowSize,       { "WindowSize",         QSize() } },
-    { Settings::Type::AnalyticsEnabled, { "AnalyticsEnabled",   true } }
+    { Settings::Type::AnalyticsEnabled, { "AnalyticsEnabled",   true } },
+    { Settings::Type::AnalyticsClientId,{ "AnalyticsClientId",  QString() } }
 };
 
 QVariant Settings::get(const Settings::Type type, const QVariant &defaultValue)

@@ -38,37 +38,11 @@ Analytics::~Analytics()
 
 bool Analytics::init()
 {
-    const QString userInfo = QSysInfo::currentCpuArchitecture()
-                             + QSysInfo::machineHostName()
-                             + QSysInfo::productType()
-                             + QSysInfo::productVersion()
-                             + Util::getUserName();
-    mUserId = QCryptographicHash::hash(userInfo.toUtf8(), QCryptographicHash::Sha512).toHex();
     return true;
 }
 
 void Analytics::release()
 {
-}
-
-void Analytics::send(const AbstractAnalyticsItemPtr item)
-{
-    send(QVector<AbstractAnalyticsItemPtr>() << item);
-}
-
-void Analytics::send(const QVector<AbstractAnalyticsItemPtr> items)
-{
-    if(items.isEmpty())
-        return;
-
-    const QByteArrayList payloads = createPayloads(items);
-    if(payloads.isEmpty())
-    {
-        qWarning() << "items produced empty payloads";
-        return;
-    }
-
-    send(payloads);
 }
 
 void Analytics::send(const Type type)
@@ -91,65 +65,49 @@ void Analytics::send(const QVector<Type> types)
     send(payloads);
 }
 
-QByteArrayList Analytics::createPayloads(const QVector<AbstractAnalyticsItemPtr> items)
-{
-    QByteArrayList payloads;
-    for(AbstractAnalyticsItemPtr item : items)
-    {
-        if(item.isNull())
-            continue;
-
-        const QVector<QPair<QString, QString>> itemPayload = item->createPayload();
-        if(itemPayload.isEmpty())
-        {
-            qWarning() << "item" << typeid(*item).name() << "produced empty payload";
-            continue;
-        }
-
-        QUrlQuery payload;
-        payload.addQueryItem("v", kAnalyticsVersion);
-        payload.addQueryItem("tid", kTrackingID);
-        payload.addQueryItem("uid", mUserId);
-        payload.addQueryItem("aip", "1");
-        for(auto payloadItem : itemPayload)
-        {
-            payload.addQueryItem(payloadItem.first, payloadItem.second);
-        }
-        payload.addQueryItem("z", QString::number(mRand(mRandGen)));
-        const QByteArray payloadData = payload.query().toLatin1();
-
-        payloads.append(payloadData);
-    }
-    return payloads;
-}
-
 QByteArrayList Analytics::createPayloads(const QVector<Type> types)
 {
+    QString clientId = Settings::get(Settings::Type::AnalyticsClientId).toString();
+    if(clientId.isEmpty())
+    {
+        clientId = QUuid::createUuid().toString();
+        Settings::set(Settings::Type::AnalyticsClientId, clientId);
+    }
+
     QByteArrayList payloads;
     for(const Type type : types)
     {
         QUrlQuery payload;
         payload.addQueryItem("v", kAnalyticsVersion);
         payload.addQueryItem("tid", kTrackingID);
-        payload.addQueryItem("uid", mUserId);
+        payload.addQueryItem("cid", clientId);
         payload.addQueryItem("aip", "1");
 
         bool isTypeValid = true;
         switch(type)
         {
+        case Type::MainWindowView:
+        {
+            payload.addQueryItem("t", "screenview");
+            payload.addQueryItem("cd", "Main Window");
+            break;
+        }
         case Type::StartupEvent:
         {
             payload.addQueryItem("t", "event");
-            payload.addQueryItem("ni", "1");
             payload.addQueryItem("ec", "App");
             payload.addQueryItem("ea", "Startup");
             payload.addQueryItem("el", "App Startup");
-            payload.addQueryItem("an", qApp->applicationName());
-            payload.addQueryItem("av", qApp->applicationVersion());
-            const QSize screenSize = qApp->primaryScreen()->size();
-            payload.addQueryItem("sr", QStringLiteral("%1x%2").arg(screenSize.width()).arg(screenSize.height()));
-            payload.addQueryItem("sd", QString::number(qApp->primaryScreen()->depth()));
-            payload.addQueryItem("ul", QLocale::languageToString(QLocale::system().language()));
+            payload.addQueryItem("sc", "start");
+            break;
+        }
+        case Type::ShutdownEvent:
+        {
+            payload.addQueryItem("t", "event");
+            payload.addQueryItem("ec", "App");
+            payload.addQueryItem("ea", "Shutdown");
+            payload.addQueryItem("el", "App Shutdown");
+            payload.addQueryItem("sc", "end");
             break;
         }
         default:
@@ -163,6 +121,13 @@ QByteArrayList Analytics::createPayloads(const QVector<Type> types)
         if(!isTypeValid)
             continue;
 
+        payload.addQueryItem("an", qApp->applicationName());
+        payload.addQueryItem("av", qApp->applicationVersion());
+        const QSize screenSize = qApp->primaryScreen()->size();
+        payload.addQueryItem("sr", QStringLiteral("%1x%2").arg(screenSize.width()).arg(screenSize.height()));
+        payload.addQueryItem("sd", QString::number(qApp->primaryScreen()->depth()));
+        payload.addQueryItem("ul", QLocale::languageToString(QLocale::system().language()));
+        payload.addQueryItem("cd1", QSysInfo::prettyProductName());
         payload.addQueryItem("z", QString::number(mRand(mRandGen)));
         payloads.append(payload.query().toLatin1());
     }
@@ -209,6 +174,5 @@ void Analytics::send(const QByteArrayList payloads)
 #endif
             reply->deleteLater();
         });
-
     }
 }
