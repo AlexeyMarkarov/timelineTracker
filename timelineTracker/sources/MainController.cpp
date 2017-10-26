@@ -81,12 +81,12 @@ bool MainController::init()
 
 void MainController::release()
 {
-    delete mWnd;
-
     Settings::set(Settings::Type::FirstRun, false);
     Settings::set(Settings::Type::WindowPosition, mWnd->getPosition());
     Settings::set(Settings::Type::WindowSize, mWnd->getSize());
     Settings::set(Settings::Type::WindowVisibility, mWnd->getVisibility());
+
+    delete mWnd;
 
     Analytics::inst().send(Analytics::Type::ShutdownEvent);
     Analytics::inst().release();

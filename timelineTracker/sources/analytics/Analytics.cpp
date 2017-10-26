@@ -43,11 +43,9 @@ bool Analytics::init()
 
 void Analytics::release()
 {
-    // Need to use separate event loop because this method is called when main event loop is not running.
-    QEventLoop evLoop;
     while(!mReplies.isEmpty())
     {
-        evLoop.processEvents(QEventLoop::AllEvents, 1000);
+        qApp->processEvents(QEventLoop::AllEvents, 1000);
     }
 }
 
@@ -79,6 +77,18 @@ QByteArrayList Analytics::createPayloads(const QVector<Type> types)
         clientId = QUuid::createUuid().toString();
         Settings::set(Settings::Type::AnalyticsClientId, clientId);
     }
+
+    static const QString osVersion = QString("%1 %2 %3 %4 %5")
+                                     .arg(QSysInfo::productType())
+                                     .arg(QSysInfo::productVersion())
+                                     .arg(QSysInfo::kernelType())
+                                     .arg(QSysInfo::kernelVersion())
+                                     .arg(QSysInfo::currentCpuArchitecture());
+    const QString screenSize = QStringLiteral("%1x%2")
+                               .arg(qApp->primaryScreen()->size().width())
+                               .arg(qApp->primaryScreen()->size().height());
+    const QString screenDepth = QString::number(qApp->primaryScreen()->depth());
+    const QString language = QLocale::languageToString(QLocale::system().language());
 
     QByteArrayList payloads;
     for(const Type type : types)
@@ -129,11 +139,11 @@ QByteArrayList Analytics::createPayloads(const QVector<Type> types)
 
         payload.addQueryItem("an", qApp->applicationName());
         payload.addQueryItem("av", qApp->applicationVersion());
-        const QSize screenSize = qApp->primaryScreen()->size();
-        payload.addQueryItem("sr", QStringLiteral("%1x%2").arg(screenSize.width()).arg(screenSize.height()));
-        payload.addQueryItem("sd", QString::number(qApp->primaryScreen()->depth()));
-        payload.addQueryItem("ul", QLocale::languageToString(QLocale::system().language()));
-        payload.addQueryItem("cd1", QSysInfo::prettyProductName());
+        payload.addQueryItem("sr", screenSize);
+        payload.addQueryItem("sd", screenDepth);
+        payload.addQueryItem("ul", language);
+        // Google Analytics allows for up to 150 bytes of data for a custom dimention.
+        payload.addQueryItem("cd1", osVersion.left(150));
         payload.addQueryItem("z", QString::number(mRand(mRandGen)));
         payloads.append(payload.query().toLatin1());
     }
