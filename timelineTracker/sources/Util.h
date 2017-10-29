@@ -20,8 +20,6 @@ public:
 
     Q_INVOKABLE static void copyToClipboard(const QString &string);
     static QString getUserName();
-
-private:
 };
 
 #endif // UTIL_H

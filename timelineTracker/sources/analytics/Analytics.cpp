@@ -157,13 +157,50 @@ void Analytics::send(const QByteArrayList payloads)
     if(!Settings::get(Settings::Type::AnalyticsEnabled).toBool())
         return;
 
-    // Google Analytics allows for up to 20 hits per batch.
-    static const int maxBatchSize = 20;
-    for(int i = 0; i < payloads.count(); i += maxBatchSize)
+    // Google Analytics batch limitations:
+    // - A maximum of 20 hits can be specified per request.
+    // - The total size of all hit payloads cannot be greater than 16K bytes.
+    // - No single hit payload can be greater than 8K bytes.
+    // https://developers.google.com/analytics/devguides/collection/protocol/v1/devguide#batch-limitations
+
+    QByteArrayList payloadsCopy = payloads;
+    while(!payloadsCopy.isEmpty())
     {
-        const QByteArrayList payloadChunk = payloads.mid(i, maxBatchSize);
+        // Compile a batch of payloads.
+        QByteArrayList payloadChunk;
+        while(!payloadsCopy.isEmpty() && (payloadChunk.count() < 20))
+        {
+            // Take a payload from the list.
+            const QByteArray payload = payloadsCopy.takeFirst();
+
+            // Discard large payloads.
+            if(payload.size() > 8*1024)
+            {
+                qWarning() << "payload is too big" << payload.size() << payload;
+                continue;
+            }
+
+            // Calculate size of the batch after current payload will be added to it.
+            const int futureSize = payload.size()
+                                   + std::accumulate(payloadChunk.constBegin(),
+                                                     payloadChunk.constEnd(),
+                                                     0,
+                                                     [](const int a, const QByteArray &b) { return a + b.size(); });
+            // If size of current batch plus new payload is acceptable - add payload.
+            if(futureSize <= 16*1024)
+            {
+                payloadChunk.append(payload);
+            }
+            // If new payload will make batch larger than allowed - add payload back to initial list and exit the loop.
+            else
+            {
+                payloadsCopy.prepend(payload);
+                break;
+            }
+        }
+
         if(payloadChunk.isEmpty())
-            continue;
+            break;
 
         QNetworkRequest request(payloadChunk.count() == 1 ? kGaEndpointCollect : kGaEndpointBatch);
         request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
