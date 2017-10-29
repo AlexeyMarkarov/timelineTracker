@@ -3,6 +3,7 @@
 
 #include <QtCore>
 #include <QtNetwork>
+#include <QtQml>
 #include <random>
 #include "AbstractAnalyticsItem.h"
 
@@ -19,12 +20,20 @@ public:
 
         // Events
         StartupEvent,
-        ShutdownEvent
+        ShutdownEvent,
+        HelpButtonClickEvent,
+        LogsButtonClickEvent,
+        AboutQtButtonClickEvent,
+        AddButtonClickEvent,
+        RemoveButtonClickEvent,
+        ClearButtonClickEvent,
     };
     Q_ENUM(Type)
 
     // Global instance.
     static Analytics &inst();
+    // A way for QML to get access to Analytics.
+    static QObject *qmlSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine);
 
     ~Analytics();
 

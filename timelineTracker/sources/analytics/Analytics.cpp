@@ -19,10 +19,24 @@ static const QString kGaEndpointBatch
 ("https://www.google-analytics.com/batch");
 #endif
 
+static const QString kEventCategoryApp("App");
+static const QString kEventCategoryGui("GUI");
+
+static const QString kEventActionStartup("Startup");
+static const QString kEventActionShutdown("Shutdown");
+static const QString kEventActionButtonClick("ButtonClick");
+
 Analytics &Analytics::inst()
 {
     static Analytics a;
     return a;
+}
+
+QObject *Analytics::qmlSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(scriptEngine)
+    engine->setObjectOwnership(&inst(), QQmlEngine::CppOwnership);
+    return &inst();
 }
 
 Analytics::Analytics(QObject *parent)
@@ -76,6 +90,8 @@ void Analytics::send_p(const QVector<Type> types)
 
 QByteArrayList Analytics::createPayloads(const QVector<Type> types)
 {
+    static const QMetaEnum metaEnum = QMetaEnum::fromType<Type>();
+
     QString clientId = Settings::get(Settings::Type::AnalyticsClientId).toString();
     if(clientId.isEmpty())
     {
@@ -98,13 +114,18 @@ QByteArrayList Analytics::createPayloads(const QVector<Type> types)
     QByteArrayList payloads;
     for(const Type type : types)
     {
+        if(metaEnum.valueToKey(static_cast<int>(type)) == nullptr)
+        {
+            qCritical() << "unknown analytics type:" << type;
+            continue;
+        }
+
         QUrlQuery payload;
         payload.addQueryItem("v", kAnalyticsVersion);
         payload.addQueryItem("tid", kTrackingID);
         payload.addQueryItem("cid", clientId);
         payload.addQueryItem("aip", "1");
 
-        bool isTypeValid = true;
         switch(type)
         {
         case Type::MainWindowView:
@@ -116,8 +137,8 @@ QByteArrayList Analytics::createPayloads(const QVector<Type> types)
         case Type::StartupEvent:
         {
             payload.addQueryItem("t", "event");
-            payload.addQueryItem("ec", "App");
-            payload.addQueryItem("ea", "Startup");
+            payload.addQueryItem("ec", kEventCategoryApp);
+            payload.addQueryItem("ea", kEventActionStartup);
             payload.addQueryItem("el", "App Startup");
             payload.addQueryItem("sc", "start");
             break;
@@ -125,22 +146,61 @@ QByteArrayList Analytics::createPayloads(const QVector<Type> types)
         case Type::ShutdownEvent:
         {
             payload.addQueryItem("t", "event");
-            payload.addQueryItem("ec", "App");
-            payload.addQueryItem("ea", "Shutdown");
+            payload.addQueryItem("ec", kEventCategoryApp);
+            payload.addQueryItem("ea", kEventActionShutdown);
             payload.addQueryItem("el", "App Shutdown");
             payload.addQueryItem("sc", "end");
             break;
         }
-        default:
+        case Type::HelpButtonClickEvent:
         {
-            qCritical() << "unknown analytics type:" << type;
-            isTypeValid = false;
+            payload.addQueryItem("t", "event");
+            payload.addQueryItem("ec", kEventCategoryGui);
+            payload.addQueryItem("ea", kEventActionButtonClick);
+            payload.addQueryItem("el", "Help");
+            break;
+        }
+        case Type::LogsButtonClickEvent:
+        {
+            payload.addQueryItem("t", "event");
+            payload.addQueryItem("ec", kEventCategoryGui);
+            payload.addQueryItem("ea", kEventActionButtonClick);
+            payload.addQueryItem("el", "Logs");
+            break;
+        }
+        case Type::AboutQtButtonClickEvent:
+        {
+            payload.addQueryItem("t", "event");
+            payload.addQueryItem("ec", kEventCategoryGui);
+            payload.addQueryItem("ea", kEventActionButtonClick);
+            payload.addQueryItem("el", "AboutQt");
+            break;
+        }
+        case Type::AddButtonClickEvent:
+        {
+            payload.addQueryItem("t", "event");
+            payload.addQueryItem("ec", kEventCategoryGui);
+            payload.addQueryItem("ea", kEventActionButtonClick);
+            payload.addQueryItem("el", "Add");
+            break;
+        }
+        case Type::RemoveButtonClickEvent:
+        {
+            payload.addQueryItem("t", "event");
+            payload.addQueryItem("ec", kEventCategoryGui);
+            payload.addQueryItem("ea", kEventActionButtonClick);
+            payload.addQueryItem("el", "Remove");
+            break;
+        }
+        case Type::ClearButtonClickEvent:
+        {
+            payload.addQueryItem("t", "event");
+            payload.addQueryItem("ec", kEventCategoryGui);
+            payload.addQueryItem("ea", kEventActionButtonClick);
+            payload.addQueryItem("el", "Clear");
             break;
         }
         }
-
-        if(!isTypeValid)
-            continue;
 
         payload.addQueryItem("an", qApp->applicationName());
         payload.addQueryItem("av", qApp->applicationVersion());

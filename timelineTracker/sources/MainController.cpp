@@ -29,6 +29,7 @@ bool MainController::init()
     qRegisterMetaType<QStyle::PixelMetric>("QStyle::PixelMetric");
     qmlRegisterUncreatableMetaObject(QStyle::staticMetaObject, "Qt.Widgets", 1, 0, "QStyle", "QStyle metaobject only.");
     qmlRegisterSingletonType<Util>("TimelineTracker", 1, 0, "Util", Util::qmlSingletonProvider);
+    qmlRegisterSingletonType<Analytics>("TimelineTracker", 1, 0, "Analytics", Analytics::qmlSingletonProvider);
 
     mTimeline = new TimelineModel(this);
     mWnd = new MainWindow(this);

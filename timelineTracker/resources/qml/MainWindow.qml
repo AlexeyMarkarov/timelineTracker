@@ -39,10 +39,6 @@ ApplicationWindow {
             console.log("Exceeded recommended minimum height: " + minimumHeight);
         }
 
-        clearButton.activated.connect(clearTimeClicked);
-        logsButton.clicked.connect(logsClicked);
-        aboutQtButton.clicked.connect(aboutQtClicked);
-
         startDate.forceActiveFocus();
     }
 
@@ -135,12 +131,22 @@ ApplicationWindow {
                     id: logsButton
                     text: qsTr("Logs")
                     visible: helpButton.checked
+
+                    onClicked: {
+                        Analytics.send(Analytics.LogsButtonClickEvent);
+                        logsClicked();
+                    }
                 }
 
                 Button {
                     id: aboutQtButton
                     text: qsTr("About Qt")
                     visible: helpButton.checked
+
+                    onClicked: {
+                        Analytics.send(Analytics.AboutQtButtonClickEvent);
+                        aboutQtClicked();
+                    }
                 }
 
                 Item { Layout.preferredWidth: Util.pixelMetric(QStyle.PM_LargeIconSize) }
@@ -175,6 +181,9 @@ ApplicationWindow {
                     checkable: true
 
                     onCheckedChanged: {
+                        if(checked) {
+                            Analytics.send(Analytics.HelpButtonClickEvent);
+                        }
                         flashBackground = false;
                     }
                 }
@@ -295,6 +304,7 @@ ApplicationWindow {
                             Layout.fillWidth: true
 
                             onClicked: {
+                                Analytics.send(Analytics.AddButtonClickEvent);
                                 addTimeClicked(new Date(startDate.date.getFullYear(),
                                                         startDate.date.getMonth(),
                                                         startDate.date.getDate(),
@@ -324,6 +334,7 @@ ApplicationWindow {
                             Layout.fillWidth: true
 
                             onActivated: {
+                                Analytics.send(Analytics.RemoveButtonClickEvent);
                                 removeTimeEntryClicked(timelineListView.currentIndex);
                             }
                             onReleased: {
@@ -345,6 +356,10 @@ ApplicationWindow {
                             }
                             Layout.fillWidth: true
 
+                            onActivated: {
+                                Analytics.send(Analytics.ClearButtonClickEvent);
+                                clearTimeClicked();
+                            }
                             onReleased: {
                                 checked = false;
                             }
