@@ -32,13 +32,15 @@ public:
     bool init();
     void release();
 
-    // Send analytics data.
+public slots:
+    // Send analytics data. These methods are thread-safe.
     void send(const Type type);
     void send(const QVector<Type> types);
 
 private slots:
     void onNetworkReplyError(const QNetworkReply::NetworkError error);
     void onNetworkReplyFinished();
+    void send_p(const QVector<Type> types);
 
 private:
     Analytics(QObject *parent = nullptr);
