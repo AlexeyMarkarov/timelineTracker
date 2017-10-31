@@ -2,10 +2,11 @@
 #define SETTINGS_H
 
 #include <QtCore>
+#include <QtQml>
 
-class Settings
+class Settings : public QObject
 {
-    Q_GADGET
+    Q_OBJECT
 
 public:
     enum class Type
@@ -19,12 +20,13 @@ public:
     };
     Q_ENUM(Type)
 
-    static QVariant get(const Type type, const QVariant &defaultValue = QVariant());
-    static void set(const Type type, const QVariant &value);
+    static QObject *qmlSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine);
 
-private:
-    Settings();
-    virtual ~Settings();
+    Q_INVOKABLE static QVariant get(const Type type, const QVariant &defaultValue = QVariant());
+    Q_INVOKABLE static void set(const Type type, const QVariant &value);
+
+    Settings() = default;
+    virtual ~Settings() = default;
 };
 
 #endif // SETTINGS_H

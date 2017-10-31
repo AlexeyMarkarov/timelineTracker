@@ -30,6 +30,7 @@ bool MainController::init()
     qmlRegisterUncreatableMetaObject(QStyle::staticMetaObject, "Qt.Widgets", 1, 0, "QStyle", "QStyle metaobject only.");
     qmlRegisterSingletonType<Util>("TimelineTracker", 1, 0, "Util", Util::qmlSingletonProvider);
     qmlRegisterSingletonType<Analytics>("TimelineTracker", 1, 0, "Analytics", Analytics::qmlSingletonProvider);
+    qmlRegisterSingletonType<Settings>("TimelineTracker", 1, 0, "Settings", Settings::qmlSingletonProvider);
 
     mTimeline = new TimelineModel(this);
     mWnd = new MainWindow(this);

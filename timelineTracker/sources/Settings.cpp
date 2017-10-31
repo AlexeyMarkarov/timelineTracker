@@ -43,3 +43,10 @@ void Settings::set(const Settings::Type type, const QVariant &value)
     }
     QSettings().setValue(data.key, value);
 }
+
+QObject *Settings::qmlSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+    return new Settings;
+}

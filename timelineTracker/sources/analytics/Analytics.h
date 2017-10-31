@@ -27,6 +27,8 @@ public:
         AddButtonClickEvent,
         RemoveButtonClickEvent,
         ClearButtonClickEvent,
+        AnalyticsEnabledEvent,
+        AnalyticsDisabledEvent,
     };
     Q_ENUM(Type)
 

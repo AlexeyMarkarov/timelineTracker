@@ -110,7 +110,21 @@ Rectangle {
                             detailedText: qsTr("Analytics help to improve the product by providing feedback on app usage.\n" +
                                                "Data includes anonymized IP address, screen resolution, OS version, system language, and UI interactions.\n" +
                                                "Powered by Google Analytics.");
+                            checked: Settings.get(Settings.AnalyticsEnabled);
                             Layout.fillWidth: true
+
+                            onCheckedChanged: {
+                                if(checked) {
+                                    // First enable, then send event.
+                                    Settings.set(Settings.AnalyticsEnabled, true);
+                                    Analytics.send(Analytics.AnalyticsEnabledEvent);
+                                }
+                                else {
+                                    // First send event, then disable
+                                    Analytics.send(Analytics.AnalyticsDisabledEvent);
+                                    Settings.set(Settings.AnalyticsEnabled, false);
+                                }
+                            }
                         }
 
                         Item { Layout.fillHeight: true }

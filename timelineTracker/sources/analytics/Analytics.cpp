@@ -25,6 +25,7 @@ static const QString kEventCategoryGui("GUI");
 static const QString kEventActionStartup("Startup");
 static const QString kEventActionShutdown("Shutdown");
 static const QString kEventActionButtonClick("ButtonClick");
+static const QString kEventActionOptions("Options");
 
 Analytics &Analytics::inst()
 {
@@ -198,6 +199,22 @@ QByteArrayList Analytics::createPayloads(const QVector<Type> types)
             payload.addQueryItem("ec", kEventCategoryGui);
             payload.addQueryItem("ea", kEventActionButtonClick);
             payload.addQueryItem("el", "Clear");
+            break;
+        }
+        case Type::AnalyticsEnabledEvent:
+        {
+            payload.addQueryItem("t", "event");
+            payload.addQueryItem("ec", kEventCategoryApp);
+            payload.addQueryItem("ea", kEventActionOptions);
+            payload.addQueryItem("el", "Analytics Enabled");
+            break;
+        }
+        case Type::AnalyticsDisabledEvent:
+        {
+            payload.addQueryItem("t", "event");
+            payload.addQueryItem("ec", kEventCategoryApp);
+            payload.addQueryItem("ea", kEventActionOptions);
+            payload.addQueryItem("el", "Analytics Disabled");
             break;
         }
         }
