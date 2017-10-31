@@ -128,6 +128,16 @@ ApplicationWindow {
                 }
 
                 Button {
+                    id: optionsButton
+                    text: qsTr("Options")
+                    visible: helpButton.checked
+                    onClicked: {
+                        helpButton.state = helpButton.stateNameOptions;
+                        optionsScreen.visible = true;
+                    }
+                }
+
+                Button {
                     id: logsButton
                     text: qsTr("Logs")
                     visible: helpButton.checked
@@ -154,11 +164,19 @@ ApplicationWindow {
                 RoundButton {
                     id: helpButton
                     property bool flashBackground: true
+                    property string iconPath
+                    readonly property string stateNameHelp: "helpState"
+                    readonly property string stateNameOptions: "optionsState"
                     background: Rectangle {
                         implicitHeight: Util.pixelMetric(QStyle.PM_LargeIconSize)
                         implicitWidth: implicitHeight
                         radius: helpButton.radius
-                        color: helpButton.checked ? syspalActive.highlight : syspalActive.button
+                        color: helpButton.checked || helpButton.pressed ? syspalActive.highlight : syspalActive.button
+                        border {
+                            width: 1
+                            color: helpButton.state === helpButton.stateNameOptions ? syspalActive.highlight : "transparent"
+                        }
+
                         SequentialAnimation on color {
                             loops: Animation.Infinite
                             running: helpButton.flashBackground
@@ -176,15 +194,54 @@ ApplicationWindow {
                         }
                     }
                     contentItem: Image {
-                        source: "image://pixmapProvider/stdpixmap/" + QStyle.SP_TitleBarContextHelpButton
+                        source: helpButton.iconPath
                     }
                     checkable: true
+                    states: [
+                        State {
+                            name: helpButton.stateNameHelp
+                            PropertyChanges {
+                                target: helpButton
+                                iconPath: "image://pixmapProvider/stdpixmap/" + QStyle.SP_TitleBarContextHelpButton
+                            }
+                            PropertyChanges {
+                                target: helpButton
+                                checkable: true
+                            }
+                            PropertyChanges {
+                                target: helpButton
+                                checked: false
+                            }
+                        },
+                        State {
+                            name: helpButton.stateNameOptions
+                            PropertyChanges {
+                                target: helpButton
+                                iconPath: "image://pixmapProvider/stdpixmap/" + QStyle.SP_TitleBarCloseButton
+                            }
+                            PropertyChanges {
+                                target: helpButton
+                                checkable: false
+                            }
+                            PropertyChanges {
+                                target: helpButton
+                                checked: false
+                            }
+                        }
+                    ]
+                    state: stateNameHelp
 
                     onCheckedChanged: {
                         if(checked) {
                             Analytics.send(Analytics.HelpButtonClickEvent);
                         }
                         flashBackground = false;
+                    }
+                    onClicked: {
+                        if(state === stateNameOptions) {
+                            optionsScreen.visible = false;
+                            state = stateNameHelp;
+                        }
                     }
                 }
             }
@@ -480,6 +537,20 @@ ApplicationWindow {
 
             onClicked: {
                 helpButton.checked = false
+            }
+        }
+
+        Rectangle {
+            id: optionsScreen
+            anchors.fill: parent
+            color: Qt.rgba(syspalActive.window.r, syspalActive.window.g, syspalActive.window.b, 200/255)
+            visible: false
+
+            OptionsWidget {
+                anchors {
+                    fill: parent
+                    margins: Util.pixelMetric(QStyle.PM_LargeIconSize)
+                }
             }
         }
     }
