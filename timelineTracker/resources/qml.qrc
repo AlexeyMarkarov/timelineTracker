@@ -4,5 +4,6 @@
         <file>qml/MainWindow.qml</file>
         <file>qml/DateTimeWidget.qml</file>
         <file>qml/HelpItem.qml</file>
+        <file>qml/OptionsWidget.qml</file>
     </qresource>
 </RCC>
