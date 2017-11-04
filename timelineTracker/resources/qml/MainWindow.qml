@@ -139,7 +139,7 @@ ApplicationWindow {
 
                 Button {
                     id: logsButton
-                    text: qsTr("Logs")
+                    text: qsTr("Log")
                     visible: helpButton.checked
 
                     onClicked: {
