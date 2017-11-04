@@ -5,17 +5,7 @@ QFile Logger::sLogFile;
 
 void Logger::init()
 {
-    const QString logDir = QDir::toNativeSeparators(getLogsDir());
-    if(!QDir(logDir).exists())
-    {
-        if(!QDir().mkpath(logDir))
-        {
-            qWarning() << Q_FUNC_INFO << "unable to create directory" << logDir;
-        }
-    }
-    const QString logPath = logDir
-                            + (logDir.endsWith(QDir::separator()) ? QString() : QDir::separator())
-                            + "log.txt";
+    const QString logPath = getLogFilePath();
     sLogFile.setFileName(logPath);
     sLogFile.open(QFile::WriteOnly | QFile::Truncate);
     if(!sLogFile.isOpen())
@@ -66,4 +56,24 @@ QString Logger::getLogsDir()
     return sLogFile.isOpen()
             ? QFileInfo(sLogFile.fileName()).absolutePath()
             : QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+}
+
+QString Logger::getLogFilePath()
+{
+    if(sLogFile.isOpen())
+    {
+        return sLogFile.fileName();
+    }
+    else
+    {
+        const QString logDir = getLogsDir();
+        if(!QDir(logDir).exists())
+        {
+            if(!QDir().mkpath(logDir))
+            {
+                qWarning() << Q_FUNC_INFO << "unable to create directory" << logDir;
+            }
+        }
+        return QDir::cleanPath(logDir + QDir::separator() + "log.txt");
+    }
 }

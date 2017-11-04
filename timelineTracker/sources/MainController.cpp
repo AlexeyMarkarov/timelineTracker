@@ -77,6 +77,13 @@ bool MainController::init()
 
         Analytics::inst().send(Analytics::Type::MainWindowView);
     }
+    else
+    {
+        const QString logPath = QUrl::fromLocalFile((Logger::getLogFilePath())).toString();
+        QMessageBox::critical(nullptr,
+                              qApp->applicationName(),
+                              tr("Startup failed. See <a href='%1'>log</a> for more details.").arg(logPath));
+    }
 
     return mWnd->isCreated();
 }

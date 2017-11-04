@@ -10,6 +10,7 @@ public:
     static void release();
 
     static QString getLogsDir();
+    static QString getLogFilePath();
 
 private:
     Logger();
