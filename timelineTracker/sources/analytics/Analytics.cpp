@@ -45,6 +45,7 @@ Analytics::Analytics(QObject *parent)
     , mRandGen(QDateTime::currentMSecsSinceEpoch())
     , mRand(0, UINT_MAX)
 {
+    mNet.setParent(this);
 }
 
 Analytics::~Analytics()
@@ -66,15 +67,15 @@ void Analytics::release()
 
 void Analytics::send(const Type type)
 {
-    QMetaObject::invokeMethod(this, "send_p", Q_ARG(const QVector<Type>, QVector<Type>() << type));
+    QMetaObject::invokeMethod(this, "send_p", Q_ARG(const QVector<Analytics::Type>, QVector<Type>() << type));
 }
 
 void Analytics::send(const QVector<Type> types)
 {
-    QMetaObject::invokeMethod(this, "send_p", Q_ARG(const QVector<Type>, types));
+    QMetaObject::invokeMethod(this, "send_p", Q_ARG(const QVector<Analytics::Type>, types));
 }
 
-void Analytics::send_p(const QVector<Type> types)
+void Analytics::send_p(const QVector<Analytics::Type> types)
 {
     if(types.isEmpty())
         return;

@@ -19,11 +19,19 @@ MainController::~MainController()
 bool MainController::init()
 {
     Logger::init();
-    Analytics::inst().init();
+
+    mAnalyticsThread.start(QThread::LowestPriority);
+    Analytics::inst().moveToThread(&mAnalyticsThread);
+    if(!Analytics::inst().init())
+    {
+        qWarning() << "Analytics initialization failed.";
+    }
 
     Analytics::inst().send(Analytics::Type::StartupEvent);
 
     qRegisterMetaType<QStyle::PixelMetric>("QStyle::PixelMetric");
+    qRegisterMetaType<Analytics::Type>("Analytics::Type");
+    qRegisterMetaType<QVector<Analytics::Type>>("QVector<Analytics::Type>");
     qmlRegisterUncreatableMetaObject(QStyle::staticMetaObject, "Qt.Widgets", 1, 0, "QStyle", "QStyle metaobject only.");
     qmlRegisterSingletonType<Util>("TimelineTracker", 1, 0, "Util", Util::qmlSingletonProvider);
     qmlRegisterSingletonType<Analytics>("TimelineTracker", 1, 0, "Analytics", Analytics::qmlSingletonProvider);
@@ -96,6 +104,11 @@ void MainController::release()
 
     Analytics::inst().send(Analytics::Type::ShutdownEvent);
     Analytics::inst().release();
+    mAnalyticsThread.quit();
+    if(!mAnalyticsThread.wait(1000))
+    {
+        mAnalyticsThread.terminate();
+    }
 
     Logger::release();
 }

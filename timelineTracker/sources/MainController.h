@@ -26,6 +26,7 @@ private slots:
 private:
     MainWindow *mWnd;
     TimelineModel *mTimeline;
+    QThread mAnalyticsThread;
 
     void updateChart();
     void updateTotalTime();

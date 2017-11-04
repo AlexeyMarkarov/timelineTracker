@@ -50,7 +50,7 @@ public slots:
 private slots:
     void onNetworkReplyError(const QNetworkReply::NetworkError error);
     void onNetworkReplyFinished();
-    void send_p(const QVector<Type> types);
+    void send_p(const QVector<Analytics::Type> types);
 
 private:
     Analytics(QObject *parent = nullptr);
@@ -62,5 +62,7 @@ private:
     std::uniform_int_distribution<uint> mRand;
     QList<QNetworkReply*> mReplies;
 };
+
+Q_DECLARE_METATYPE(QVector<Analytics::Type>)
 
 #endif // ANALYTICS_H
