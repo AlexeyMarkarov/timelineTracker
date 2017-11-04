@@ -6,9 +6,6 @@
 #include "Util.h"
 #include "Logger.h"
 #include "analytics/Analytics.h"
-#include "analytics/ScreenInfoAnalyticsItem.h"
-#include "analytics/UserLanguageAnalyticsItem.h"
-#include "analytics/AppInfoAnalyticsItem.h"
 
 MainController::MainController(QObject *parent)
     : QObject(parent)

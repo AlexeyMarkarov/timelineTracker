@@ -5,7 +5,6 @@
 #include <QtNetwork>
 #include <QtQml>
 #include <random>
-#include "AbstractAnalyticsItem.h"
 
 // Main analytics manager. Sends provided analytics items to Google Analytics.
 class Analytics : public QObject
