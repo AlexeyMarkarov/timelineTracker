@@ -19,7 +19,9 @@ MainController::~MainController()
 bool MainController::init()
 {
     Logger::init();
+    qInfo() << "App starting... version is" << qApp->applicationVersion();
 
+    qInfo() << "Initializing analytics...";
     mAnalyticsThread.start(QThread::LowestPriority);
     Analytics::inst().moveToThread(&mAnalyticsThread);
     if(!Analytics::inst().init())
@@ -29,6 +31,7 @@ bool MainController::init()
 
     Analytics::inst().send(Analytics::Type::StartupEvent);
 
+    qInfo() << "Initializing meta types...";
     qRegisterMetaType<QStyle::PixelMetric>("QStyle::PixelMetric");
     qRegisterMetaType<Analytics::Type>("Analytics::Type");
     qRegisterMetaType<QVector<Analytics::Type>>("QVector<Analytics::Type>");
@@ -37,10 +40,12 @@ bool MainController::init()
     qmlRegisterSingletonType<Analytics>("TimelineTracker", 1, 0, "Analytics", Analytics::qmlSingletonProvider);
     qmlRegisterSingletonType<Settings>("TimelineTracker", 1, 0, "Settings", Settings::qmlSingletonProvider);
 
+    qInfo() << "Creating members...";
     mTimeline = new TimelineModel(this);
     mWnd = new MainWindow(this);
     mWnd->setTimeModel(mTimeline);
 
+    qInfo() << "Connecting signals...";
     connect(mWnd, &MainWindow::addTimeClicked,         mTimeline, QOverload<const QDateTime, const QDateTime>::of(&TimelineModel::addTime));
     connect(mWnd, &MainWindow::removeTimeEntryClicked, mTimeline, &TimelineModel::removeRow);
     connect(mWnd, &MainWindow::clearTimeClicked,       mTimeline, &TimelineModel::clear);
@@ -52,6 +57,7 @@ bool MainController::init()
     connect(mTimeline, &TimelineModel::rowsRemoved,  this, &MainController::updateOutput);
     connect(mTimeline, &TimelineModel::dataChanged,  this, &MainController::updateOutput);
 
+    qInfo() << "Initializing main window...";
     if(mWnd->isCreated())
     {
         QWindow::Visibility visibility = static_cast<QWindow::Visibility>(Settings::get(Settings::Type::WindowVisibility).toInt());
@@ -95,13 +101,16 @@ bool MainController::init()
 
 void MainController::release()
 {
+    qInfo() << "Saving settings...";
     Settings::set(Settings::Type::FirstRun, false);
     Settings::set(Settings::Type::WindowPosition, mWnd->getPosition());
     Settings::set(Settings::Type::WindowSize, mWnd->getSize());
     Settings::set(Settings::Type::WindowVisibility, mWnd->getVisibility());
 
+    qInfo() << "Destroying main window...";
     delete mWnd;
 
+    qInfo() << "Destroying analytics...";
     Analytics::inst().send(Analytics::Type::ShutdownEvent);
     Analytics::inst().release();
     mAnalyticsThread.quit();
@@ -110,6 +119,7 @@ void MainController::release()
         mAnalyticsThread.terminate();
     }
 
+    qInfo() << "Closing logs...";
     Logger::release();
 }
 
