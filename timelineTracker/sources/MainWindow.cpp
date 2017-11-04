@@ -20,17 +20,13 @@ void MainWindow::createMembers()
     mEngine.addImageProvider("pixmapProvider", new QmlPixmapProvider);
     mRootComponent = new QQmlComponent(&mEngine);
     mRootComponent->loadUrl(QUrl("qrc:/qml/MainWindow.qml"), QQmlComponent::PreferSynchronous);
-    if(QObject *obj = mRootComponent->create())
+    if(QObject *obj = mRootComponent->beginCreate(mEngine.rootContext()))
     {
         mWindow = obj;
         mWindow->setParent(this);
         mChart->setWrappedObject(QQmlProperty::read(mWindow, "chart").value<QObject*>());
-
-        // set default text for intervals view which will change window's minimum size
         QQmlProperty::write(mWindow, "timeModelStdText", TimelineModel::getStdText());
-        // and refresh window actual size based on minimum size
-        QQmlProperty::write(mWindow, "width", QQmlProperty::read(mWindow, "minimumWidth"));
-        QQmlProperty::write(mWindow, "height", QQmlProperty::read(mWindow, "minimumHeight"));
+        mRootComponent->completeCreate();
     }
     else
     {

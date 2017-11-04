@@ -33,16 +33,16 @@ bool MainController::init()
     mWnd = new MainWindow(this);
     mWnd->setTimeModel(mTimeline);
 
-    connect(mWnd, &MainWindow::addTimeClicked,  mTimeline, QOverload<const QDateTime, const QDateTime>::of(&TimelineModel::addTime));
+    connect(mWnd, &MainWindow::addTimeClicked,         mTimeline, QOverload<const QDateTime, const QDateTime>::of(&TimelineModel::addTime));
     connect(mWnd, &MainWindow::removeTimeEntryClicked, mTimeline, &TimelineModel::removeRow);
-    connect(mWnd, &MainWindow::clearTimeClicked, mTimeline, &TimelineModel::clear);
-    connect(mWnd, &MainWindow::logsClicked, this, &MainController::onLogsClicked);
-    connect(mWnd, &MainWindow::aboutQtClicked, qApp, &QApplication::aboutQt);
-    connect(mWnd, &MainWindow::closing, this, &MainController::onWindowClosing);
+    connect(mWnd, &MainWindow::clearTimeClicked,       mTimeline, &TimelineModel::clear);
+    connect(mWnd, &MainWindow::logsClicked,            this,      &MainController::onLogsClicked);
+    connect(mWnd, &MainWindow::aboutQtClicked,         qApp,      &QApplication::aboutQt);
+    connect(mWnd, &MainWindow::closing,                this,      &MainController::onWindowClosing);
 
-    connect(mTimeline, &TimelineModel::rowsInserted,    this, &MainController::updateOutput);
-    connect(mTimeline, &TimelineModel::rowsRemoved,     this, &MainController::updateOutput);
-    connect(mTimeline, &TimelineModel::dataChanged,     this, &MainController::updateOutput);
+    connect(mTimeline, &TimelineModel::rowsInserted, this, &MainController::updateOutput);
+    connect(mTimeline, &TimelineModel::rowsRemoved,  this, &MainController::updateOutput);
+    connect(mTimeline, &TimelineModel::dataChanged,  this, &MainController::updateOutput);
 
     if(mWnd->isCreated())
     {
