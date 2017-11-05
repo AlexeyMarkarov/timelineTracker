@@ -50,8 +50,14 @@ ApplicationWindow {
     Item {
         anchors.fill: parent
         Keys.onEscapePressed: {
-            if(helpButton.checked) {
-                helpButton.checked = false;
+            if(helpButton.state === helpButton.stateNameHelp) {
+                if(helpButton.checked) {
+                    helpButton.checked = false;
+                    event.accepted = true;
+                }
+            }
+            else if(helpButton.state === helpButton.stateNameOptions) {
+                helpButton.state = helpButton.stateNameHelp;
                 event.accepted = true;
             }
         }
@@ -133,7 +139,6 @@ ApplicationWindow {
                     visible: helpButton.checked
                     onClicked: {
                         helpButton.state = helpButton.stateNameOptions;
-                        optionsScreen.visible = true;
                     }
                 }
 
@@ -239,7 +244,6 @@ ApplicationWindow {
                     }
                     onClicked: {
                         if(state === stateNameOptions) {
-                            optionsScreen.visible = false;
                             state = stateNameHelp;
                         }
                     }
@@ -541,10 +545,9 @@ ApplicationWindow {
         }
 
         Rectangle {
-            id: optionsScreen
             anchors.fill: parent
             color: Qt.rgba(syspalActive.window.r, syspalActive.window.g, syspalActive.window.b, 200/255)
-            visible: false
+            visible: helpButton.state === helpButton.stateNameOptions
 
             OptionsWidget {
                 anchors {
