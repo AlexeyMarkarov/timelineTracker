@@ -214,6 +214,7 @@ void MainController::updateChart()
     valueAxis->setMin(0);
     valueAxis->setMax((minutesNumber + 1) * minutesMultiplier);
     valueAxis->setTickCount(minutesNumber + 2);
+    valueAxis->setMinorTickCount(9);
     valueAxis->setTitleText(tr("Minutes"));
 
     // add data that is not already in chart
@@ -241,6 +242,14 @@ void MainController::updateChart()
                 areaSeries->setOpacity(0.5);
                 areaSeries->setProperty(kPropSpanId, span.id);
                 areaSeries->setPointsVisible();
+                areaSeries->setPointLabelsFormat(QString("%1m/%2h")
+                                                 .arg(span.getSpanMsec() / 1000 / 60)
+                                                 .arg(span.getSpanMsec() / 1000.0 / 60.0 / 60.0, 0, 'f', 2));
+
+                connect(areaSeries, &QAreaSeries::hovered, [areaSeries](const QPointF &point, bool state) {
+                    Q_UNUSED(point);
+                    areaSeries->setPointLabelsVisible(state);
+                });
             }
             else
             {
