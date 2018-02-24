@@ -264,7 +264,7 @@ void MainController::updateTotalTime()
     QVector<TimeSpan> timeline = mTimeline->getTimeline();
     std::sort(timeline.begin(), timeline.end(), [](const TimeSpan &a, const TimeSpan &b) {
         // sort by start time (earlier goes first), and then by duration (larger goes first)
-        return a.start < b.start ? true : a.getSpanMsec() > b.getSpanMsec();
+        return a.start == b.start ? a.getSpanMsec() > b.getSpanMsec() : a.start < b.start;
     });
     for(int i = timeline.count() - 1; i > 0; --i)
     {
