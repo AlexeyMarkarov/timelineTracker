@@ -253,14 +253,25 @@ void MainController::updateChart()
 void MainController::updateTotalTime()
 {
     QVector<TimeSpan> timeline = mTimeline->getTimeline();
-    std::sort(timeline.begin(), timeline.end(), [](const TimeSpan &a, const TimeSpan &b) { return a.start < b.start; });
+    std::sort(timeline.begin(), timeline.end(), [](const TimeSpan &a, const TimeSpan &b) {
+        // sort by start time (earlier goes first), and then by duration (larger goes first)
+        return a.start < b.start ? true : a.getSpanMsec() > b.getSpanMsec();
+    });
     for(int i = timeline.count() - 1; i > 0; --i)
     {
         const TimeSpan &thisSpan = timeline.at(i);
-        TimeSpan &prevSpan = timeline[i - 1];
-        if(prevSpan.end >= thisSpan.start)
+        bool remove = false;
+        for(int j = i - 1; j >= 0; --j)
         {
-            prevSpan.end = std::max(prevSpan.end, thisSpan.end);
+            TimeSpan &prevSpan = timeline[j];
+            if(prevSpan.end >= thisSpan.start)
+            {
+                prevSpan.end = std::max(prevSpan.end, thisSpan.end);
+                remove = true;
+            }
+        }
+        if(remove)
+        {
             timeline.removeAt(i);
         }
     }
